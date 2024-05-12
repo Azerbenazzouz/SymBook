@@ -20,12 +20,17 @@
 		<section class="mb-3">
 			<div class="bg-dark py-2 d-flex justify-content-end px-5">
 				<div class="d-flex gap-3">
-				<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_register') }}">Inscrire</a>
-				<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_login') }}">Connecter</a></div>
+					{% if app.user %}
+						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_logout') }}">Deconnecter</a>
+					{% else %}
+						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_register') }}">Inscrire</a>
+						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_login') }}">Connecter</a>
+					{% endif %}
+					</div>
 			</div>
 			<nav class="navbar bg-body px-5 bg-primary shadow">
 				<div class="container-fluid">
-					<a class="navbar-brand fs-3 fw-bold text-primary" href="#">SymBook</a>
+					<a class="navbar-brand fs-3 fw-bold text-primary" href="{{ path('app_home') }}">SymBook</a>
 					<button class="btn rounded-5 px-3 bg-success btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#cart-canvas" aria-controls="cart-canvas">
 					<span class="badge bg-primary rounded me-2">0</span><i class="fas fa-shopping-cart me-2"></i>0.000 DT</button>
 				</div>
