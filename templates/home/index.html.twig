@@ -32,7 +32,9 @@
                         </p>
                         <div class="d-flex justify-content-between gap-3">
                             <button class="btn btn-success w-50" type="button">Ajouter Panier</button>
-                            <button class="btn btn-primary w-50" type="button">consulter</button>
+                            <a class="btn btn-primary w-50" type="button" 
+                                href="{{ path('app_livre', {'id': livre.id}) }}"
+                            >consulter</a>
                         </div>
                     </div>
                 </div>

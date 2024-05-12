@@ -31,4 +31,25 @@ class HomeController extends AbstractController
             'livres' => $livres
         ]);
     }
+    // livre par id
+    #[Route('/livre/{id}', name: 'app_livre')]
+    public function livre(LivresRepository $rep, $id): Response
+    {
+        $livre = $rep->find($id);
+
+        $qb = $rep->createQueryBuilder('l'); // 'l' est un alias pour 'livre'
+        $livres = $qb->where('l.categorie = :categorie')
+            ->andWhere('l.id != :currentBookId')
+            ->setParameter('categorie', $livre->getCategorie())
+            ->setParameter('currentBookId', $livre->getId())
+            ->orderBy('l.editedAt', 'DESC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult();
+
+        return $this->render('livres/show.html.twig', [
+            'livre' => $livre,
+            'livres' => $livres
+        ]);
+    }
 }
