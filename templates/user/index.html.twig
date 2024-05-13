@@ -1,20 +1,62 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Hello UserController!{% endblock %}
-
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/xampp1/htdocs/SymbookProject/src/Controller/UserController.php</code></li>
-        <li>Your template at <code>C:/xampp1/htdocs/SymbookProject/templates/user/index.html.twig</code></li>
-    </ul>
-</div>
+<section class="py-5">
+    <div class="container">
+        <div class="main-body">
+            <div class="row gutters-sm">
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-center d-flex flex-column align-items-center"><img class="rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin" width="150">
+                                <div class="mt-3">
+                                    <h4>{{ user.nom|capitalize }}</h4>
+                                    <p class="text-muted font-size-sm">{{ user.adresse }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm-3 col-md-4">
+                                    <h6 class="mb-0">Nom Complet</h6>
+                                </div>
+                                <div class="col-sm-9 col-md-8 text-secondary"><span>{{ user.nom|capitalize }}</span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3 col-md-4">
+                                    <h6 class="mb-0">Email</h6>
+                                </div>
+                                <div class="col-sm-9 col-md-8 text-secondary"><span> {{ user.email }} </span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3 col-md-4">
+                                    <h6 class="mb-0">Phone</h6>
+                                </div>
+                                <div class="col-sm-9 col-md-8 text-secondary"><span>{{ user.telephone }}</span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3 col-md-4">
+                                    <h6 class="mb-0">Address</h6>
+                                </div>
+                                <div class="col-sm-9 col-md-8 text-secondary"><span>{{ user.adresse }}</span></div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-12 d-flex justify-content-end">
+                                <a class="btn btn-info" role="button" href="#">Edit</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

@@ -30,8 +30,18 @@
 
 					{% endif %}
 				</div>
-				<div class="d-flex gap-3">
+				<div class="d-flex gap-3 align-items-center">
 					{% if app.user %}
+						{# Mes Commandes #}
+						<a href="{{ path('app_user') }}">
+							<i class="fas fa-truck fs-3 text-light"></i>
+						</a>
+						{# Panier #}
+						{# profile #}
+						<a href="{{ path('app_user') }}">
+							<i class="fas fa-user-circle fs-3 text-light"></i>
+						</a>
+
 						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_logout') }}">Deconnecter</a>
 					{% else %}
 						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_register') }}">Inscrire</a>
