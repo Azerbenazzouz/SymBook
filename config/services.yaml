@@ -19,6 +19,16 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
-
+    # App\EventListener\SearchListener:
+    #     class: App\EventListener\SearchListener
+    #     tags:
+    #         - { name: kernel.event_listener, event: kernel.request }
+    App\EventListener\SearchListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
+    App\Form\SearchType:
+        class: App\Form\SearchType
+        tags:
+            - { name: form.type }
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

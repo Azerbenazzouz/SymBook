@@ -3,8 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Livres;
+use App\Model\SearchData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @extends ServiceEntityRepository<Livres>
@@ -16,7 +19,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class LivresRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry,private PaginatorInterface $paginateur)
     {
         parent::__construct($registry, Livres::class);
     }
@@ -45,4 +48,39 @@ class LivresRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+
+    // public function findBySearch2(SearchData $searchData): PaginationInterface
+    // {
+    //     $data=$this->createQueryBuilder('search');
+    //     if(!empty($searchData->search)){
+    //         $data= $data
+    //         ->andWhere('search.titre LIKE :titre')
+    //         ->setParameter('titre',"%{$searchData->search}%");
+    //     }
+
+    //     $data=$data
+    //     ->getQuery()
+    //     ->getResult();
+    //     $livers= $this->paginateur->paginate($data,$searchData->page,8);
+    //     return $livers;
+    // }
+
+
+public function findBySearch(SearchData $searchData): PaginationInterface
+{
+    $data=$this->createQueryBuilder('p');
+    if(!empty($searchData->q)){
+        $data= $data
+        ->andWhere('p.titre LIKE :titre')
+        ->setParameter('titre',"%{$searchData->q}%");
+    }
+
+    $data=$data
+    ->getQuery()
+    ->getResult();
+    $livers= $this->paginateur->paginate($data,$searchData->page,8);
+    return $livers;
+}
+
 }
