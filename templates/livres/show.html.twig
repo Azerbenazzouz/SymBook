@@ -3,23 +3,66 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-    <div class="card">
-        <div class="card-body">
-            <h1 class="card-title">
-			Détail du livre
-                <span class="text-primary">Détail du livre {{ livre.titre|capitalize }} ({{ livre.prix }} DT)</span>
-            </h1>
-            <div class="row">
-                <div class="col-3">
-                    <img src="{{ livre.image }}" class="img-fluid" alt="">
-                </div>
-                <div class="col-9">
-                    <h4>ISBN: {{ livre.isbn }}</h4>
-                    <h4>Editeur: {{ livre.editeur }}</h4>
-                    <h4>Date Edition: {{ livre.editedAt|date('d-m-Y') }}</h4>
-                    <p>{{ livre.resume }}</p>
+    <section>
+        <div class="container-fluid">
+            <div class="container my-4">
+                <div class="row">
+                    <div class="col-md-6 py-3">
+                    <img alt="white book on black textile" class="w-100 img-thumbnail" src={{ livre.image }}
+                    
+                    ></div>
+                    <div class="col-md-6 pt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h2 class="text-primary">{{ livre.titre|capitalize }}</h2>
+                            <h4 class="text-success border rounded-5 px-2 py-1 border-success">{{ livre.prix }} DT</h4>
+                        </div>
+
+                        <h5>ISBN: {{ livre.isbn }}</h5>
+                        <h5>Editeur: {{ livre.editeur }}</h5>
+                        <h5>Date Edition: {{ livre.editedAt|date('d-m-Y') }}</h5>
+                        <h5>Description: </h5>
+                        <p>
+                            {{ livre.resume }}
+                        </p> 
+                        <div class="d-flex justify-content-between gap-3">
+                        <button class="btn btn-info w-50 mb-3" type="button">Ajouter Panier</button>
+                        <button class="btn btn-success w-50 mb-3" type="button">Acheter</button>   
+                        
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+        <section>
+        <div class="container">
+            <h1 class="text-capitalize text-center">suggestions</h1>
+            {# Liste des Livres Suggerer #}
+            <div class="row d-flex justify-content-around mx-3 gap-3">
+                {# Book Card #}
+                {% for livre in livres %}
+                <div class="card col-6 my-3 col-md-4 col-lg-3 w-md-25" style="max-width: 300px;">
+                    <div class="card-header p-1"><img alt="white book on black textile" class="w-100" src={{livre.image}}></div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4>{{ livre.titre|capitalize }}</h4>
+                            <h4 class="text-success border rounded-5 px-2 py-1 border-success">{{ livre.prix }}DT</h4>
+                        </div>
+                        <h6 class="text-muted card-subtitle mb-2">{{ livre.auteur }}</h6>
+                        <p class="card-text">
+                            {{ livre.resume|slice(0, 100) }}...
+                        </p>
+                        <div class="d-flex justify-content-between gap-3">
+                            <button class="btn btn-success w-50" type="button">Ajouter Panier</button>
+                            <a class="btn btn-primary w-50" type="button"
+                                href="{{ path('app_livre', {'id': livre.id}) }}"
+                            >consulter</a></div>
+                    </div>
+                </div>
+                {% endfor %}
+                {# End Book Card #}
+                
+            </div>
+        </div>
+    </section>
 {% endblock %}

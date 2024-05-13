@@ -4,11 +4,41 @@
 {% endblock %}
 
 {% block body %}
-	<h1>Liste des catégories</h1>
-	<ul>
-		{% for cat in categories %}
-			<li>{{cat.libelle}}</li>
 
+	<h1>Liste des Catégories</h1>
+	<div class="d-flex justify-content-end mb-3">
+		<a href="{{url('admin_categorie_create')}}" class="btn btn-primary">Ajouter une catégorie</a>
+	</div>
+
+	<table class="table">
+		<tr>
+			<th>Libelle</th>
+			<th>SLUG</th>
+			<th>Description</th>
+			<th colspan="3">Action</th>
+		</tr>
+
+		{% for categorie in categories %}
+			<tr>
+				<td>{{categorie.libelle|capitalize}}</td>
+				<td>{{categorie.slug}}</td>
+				<td>{{categorie.description}}</td>
+				{# <td>
+					<a href="{{url('admin_livres_show',{'id':categorie.id})}}" class="btn btn-success btn-sm">Voir détail...</a>
+				</td> #}
+				<td>
+					<a 
+						href="{{url('admin_categorie_delete',{'id':categorie.id})}}"
+						class="btn btn-danger btn-sm"
+					>Supprimer</a>
+				</td>
+				<td>
+					<a
+						href="{{url('admin_categorie_update',{'id':categorie.id})}}"
+					 	class="btn btn-primary btn-sm"
+					>Editer</a>
+				</td>
+			</tr>
 		{% endfor %}
-	</ul>
+	</table>
 {% endblock %}

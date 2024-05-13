@@ -32,7 +32,9 @@
                         </p>
                         <div class="d-flex justify-content-between gap-3">
                             <button class="btn btn-success w-50" type="button">Ajouter Panier</button>
-                            <button class="btn btn-primary w-50" type="button">consulter</button>
+                            <a class="btn btn-primary w-50" type="button" 
+                                href="{{ path('app_livre', {'id': livre.id}) }}"
+                            >consulter</a>
                         </div>
                     </div>
                 </div>
@@ -49,7 +51,11 @@
         </section>
         {# End List des livres #}
         {# Pagination #}
-        <section class="container d-flex justify-content-center my-3">
+        <div class=" container d-flex justify-content-center my-3">
+            {% do livres.setPageRange(2)%}
+            {{knp_pagination_render(livres,"home/pagination.html.twig")}}
+        </div>
+        {# <section class="container d-flex justify-content-center my-3">
             <nav>
                 <ul class="pagination">
                     <li class="page-item"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
@@ -61,7 +67,7 @@
                     <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
                 </ul>
             </nav>
-        </section>
+        </section> #}
         {# End Pagination #}
     </section>
     {# Offcanvas Filter #}
