@@ -1,0 +1,47 @@
+<div class="card mb-3">
+    <div class="card-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5">
+                    <img alt="white book on black textile" class="img-thumbnail w-100" src="../assets/img/photo-1586974722828-4a75a60c57b2.jpg">
+                </div>
+                <div class="col-md-7">
+                    <h4>Titre de Livre</h4>
+                    <h6 class="text-muted mb-2">Lewis Hamilton</h6>
+                    <div class="input-group">
+                        <button class="btn btn-primary" type="button" onclick="plus(this)">
+                            <i class="fas fa-caret-up"></i>
+                        </button>
+                        <input class="form-control text-center number-without-arrows" type="number" inputmode="numeric" value="0" min="0" step="1">
+                        <button class="btn btn-primary" type="button" onclick="minus(this)">
+                            <i class="fas fa-caret-down" style="font-size: 17px;"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    plus = (element) => {
+        let input = element.parentElement.querySelector('input');
+        input.value = parseInt(input.value) + 1;
+    }
+
+    minus = (element) => {
+        let input = element.parentElement.querySelector('input');
+        if (parseInt(input.value) > 0) {
+            input.value = parseInt(input.value) - 1;
+        }
+    }
+
+    {# document.querySelectorAll('.btn-primary').forEach((element) => {
+        element.addEventListener('click', () => {
+            if (element.querySelector('i').classList.contains('fa-caret-up')) {
+                plus(element);
+            } else {
+                minus(element);
+            }
+        });
+    }); #}
+</script>
