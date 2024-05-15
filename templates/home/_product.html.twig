@@ -1,0 +1,21 @@
+<div class="card col-6 my-3 col-md-4 col-lg-3 w-md-25" style="max-width: 300px;">
+    <div class="card-header p-1">
+        <img alt="white book on black textile" class="w-100" src={{livre.image}}>
+    </div>
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <h4>{{livre.titre}}</h4>
+            <h4 class="text-success border rounded-5 px-2 py-1 border-success">{{livre.prix}}DT</h4>
+        </div>
+        <h6 class="text-muted card-subtitle mb-2">{{livre.auteur}}</h6>
+        <p class="card-text">
+            {{livre.resume}}
+        </p>
+        <div class="d-flex justify-content-between gap-3">
+            <button class="btn btn-success w-50" type="button">Ajouter Panier</button>
+            <a class="btn btn-primary w-50" type="button"
+               href="{{ path('app_livre', {'id': livre.id}) }}"
+            >consulter</a>
+        </div>
+    </div>
+</div>

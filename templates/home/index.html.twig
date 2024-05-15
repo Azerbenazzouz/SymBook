@@ -5,7 +5,7 @@
 
 {% block body %}
     {# List des livres #}
-        <section>
+    <section>
         <section>
             <div class="d-flex justify-content-between container py-3 gap-3">
                 <div>
@@ -17,10 +17,11 @@
                     </button>
                 </div>
                 {{form_start(form)}}
-                <div class="d-flex gap-1">
-                {{form_widget(form.q , {'attr':{'class':'form-control'}})}}
-              <button class="btn btn-primary" type="submit">Chercher</button></div>
-                  {{form_end(form)}}
+                    <div class="d-flex gap-1">
+                        {{form_widget(form.q , {'attr':{'class':'form-control'}})}}
+                        <button class="btn btn-primary" type="submit">Chercher</button>
+                    </div>
+                {{form_end(form)}}
             </div>
         </section>
         <section class="mt-3 container-fluid">
@@ -28,27 +29,7 @@
             <div class="row d-flex justify-content-between mx-3">
                 {# Product  #}
                 {% for livre in livres %}
-                <div class="card col-6 my-3 col-md-4 col-lg-3 w-md-25" style="max-width: 300px;">
-                    <div class="card-header p-1">
-                        <img alt="white book on black textile" class="w-100" src={{livre.image}}>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h4>{{livre.titre}}</h4>
-                            <h4 class="text-success border rounded-5 px-2 py-1 border-success">{{livre.prix}}DT</h4>
-                        </div>
-                        <h6 class="text-muted card-subtitle mb-2">{{livre.auteur}}</h6>
-                        <p class="card-text">
-                            {{livre.resume}}
-                        </p>
-                        <div class="d-flex justify-content-between gap-3">
-                            <button class="btn btn-success w-50" type="button">Ajouter Panier</button>
-                            <a class="btn btn-primary w-50" type="button" 
-                                href="{{ path('app_livre', {'id': livre.id}) }}"
-                            >consulter</a>
-                        </div>
-                    </div>
-                </div>
+                    {% include 'home/_product.html.twig' with {livre: livre} only %}
                 {% endfor %}
 
                 {% if livres|length == 0 %}
@@ -66,19 +47,6 @@
             {% do livres.setPageRange(2)%}
             {{knp_pagination_render(livres,"home/pagination.html.twig")}}
         </div>
-        {# <section class="container d-flex justify-content-center my-3">
-            <nav>
-                <ul class="pagination">
-                    <li class="page-item"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item"><a class="page-link" href="#">5</a></li>
-                    <li class="page-item"><a class="page-link" aria-label="Next" href="#"><span aria-hidden="true">»</span></a></li>
-                </ul>
-            </nav>
-        </section> #}
         {# End Pagination #}
     </section>
     {# Offcanvas Filter #}
