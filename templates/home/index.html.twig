@@ -58,7 +58,14 @@
         <div class="offcanvas-body">
             <p>Parcours et recherche de livres par titre, auteur et catégorie...</p>
             <div>
-                <div class="input-group mb-2">
+                {% include 'home/_filter.html.twig' with {formFilter: formFilter} only %}
+                
+            {#
+                {{ form_start(formFilter) }}
+                {{ form_widget(formFilter) }}
+                <button type="submit" class="btn btn-primary w-100">Filtrer</button>
+                {{ form_end(formFilter) }}
+                 <div class="input-group mb-2">
                     <span class="input-group-text">Titre</span>
                     <input class="form-control" type="text">
                 </div>
@@ -87,7 +94,7 @@
             <div class="d-flex justify-content-end gap-3">
                 <button class="btn btn-primary" type="button" data-bs-dismiss="offcanvas">Close</button>
                 <button class="btn btn-success" type="button" data-bs-dismiss="offcanvas">Filtrer</button>
-            </div>
+            </div> #}
         </div>
     </div>
 {% endblock %}
