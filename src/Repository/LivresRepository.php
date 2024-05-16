@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Livres;
+use App\Model\FilterData;
 use App\Model\SearchData;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -82,5 +83,40 @@ public function findBySearch(SearchData $searchData): PaginationInterface
     $livers= $this->paginateur->paginate($data,$searchData->page,8);
     return $livers;
 }
+
+    public function findByFilter(FilterData $filterData): PaginationInterface
+    {
+        $data = $this->createQueryBuilder('p');
+        if (!empty($filterData->titre)) {
+            $data = $data
+                ->andWhere('p.titre LIKE :titre')
+                ->setParameter('titre', "%{$filterData->titre}%");
+        }
+        if (!empty($filterData->auteur)) {
+            $data = $data
+                ->andWhere('p.auteur LIKE :auteur')
+                ->setParameter('auteur', "%{$filterData->auteur}%");
+        }
+        if (!empty($filterData->categories)) {
+            $data = $data
+                ->andWhere('p.categorie IN (:categories)')
+                ->setParameter('categories', $filterData->categories);
+        }
+        if (!empty($filterData->prixMin)) {
+            $data = $data
+                ->andWhere('p.prix >= :prixMin')
+                ->setParameter('prixMin', $filterData->prixMin);
+        }
+        if (!empty($filterData->prixMax)) {
+            $data = $data
+                ->andWhere('p.prix <= :prixMax')
+                ->setParameter('prixMax', $filterData->prixMax);
+        }
+        $data = $data
+            ->getQuery()
+            ->getResult();
+        $livres = $this->paginateur->paginate($data, $filterData->page, 8);
+        return $livres;
+    }
 
 }

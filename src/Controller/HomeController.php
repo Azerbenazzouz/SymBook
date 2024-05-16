@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Form\FilterType;
 use App\Form\SearchType;
+use App\Model\FilterData;
 use App\Model\SearchData;
 use App\Repository\CategoriesRepository;
 use App\Repository\LivresRepository;
@@ -112,22 +114,23 @@ class HomeController extends AbstractController
         if($form->isSubmitted() && $form->isValid()){
            $searchData=$form->getData();
            $searchData->page=$request->query->getInt('page',1);
-           $livres=$rep->findBySearch($searchData);
+           $livres = $rep->findBySearch($searchData);
+        }
 
-
-           return $this->render('home/index.html.twig', [
-               'form'=>$form->createView(),
-               'livres' => $livres,
-               'categories' => $categories,
-
-           ]);
-
+        $filterData = new FilterData();
+        $formFilter = $this->createForm(FilterType::class, $filterData);
+        $formFilter->handleRequest($request);
+        if ($formFilter->isSubmitted() && $form->isValid()) {
+            $filterData = $formFilter->getData();
+            $filterData->page = $request->query->getInt('page', 1);
+            $livres = $rep->findByFilter($filterData);
         }
 
         return $this->render('home/index.html.twig', [
             'livres' => $livres,
             'categories' => $categories,
             'form'=>$form->createView(),
+            'formFilter'=>$formFilter->createView(),
         ]);
     }
 
@@ -205,7 +208,7 @@ class HomeController extends AbstractController
         return $this->render('home/index.html.twig', [
             'livres' => $livres,
             'categories' => $categories,
-            'form'=>$form->createView(),
+            'form'=>$form->createView()
         ]);
     }
 }
