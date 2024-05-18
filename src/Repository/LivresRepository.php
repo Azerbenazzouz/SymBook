@@ -101,8 +101,9 @@ public function findBySearch(SearchData $searchData): PaginationInterface
                 ->setParameter('titre', "%{$filterData->titre}%");
         }
         if (!empty($filterData->auteur)) {
+            //dd($filterData);
             $data = $data
-                ->andWhere('p.auteur LIKE :auteur')
+                ->andWhere('p.Auteur LIKE :auteur')
                 ->setParameter('auteur', "%{$filterData->auteur}%");
         }
         if (!empty($filterData->categories)) {
