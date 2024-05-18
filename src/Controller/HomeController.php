@@ -120,7 +120,9 @@ class HomeController extends AbstractController
         $filterData = new FilterData();
         $formFilter = $this->createForm(FilterType::class, $filterData);
         $formFilter->handleRequest($request);
-        if ($formFilter->isSubmitted() && $form->isValid()) {
+        //$livres = $rep->findByFilter($filterData);
+        //dd($livres);
+        if ($formFilter->isSubmitted()) {
             $filterData = $formFilter->getData();
             $filterData->page = $request->query->getInt('page', 1);
             $livres = $rep->findByFilter($filterData);

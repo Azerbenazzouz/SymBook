@@ -20,9 +20,17 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class LivresRepository extends ServiceEntityRepository
 {
+
+    /**
+     * @var PaginatorInterface $paginateur
+     */
+
+    private $paginator;
     public function __construct(ManagerRegistry $registry,private PaginatorInterface $paginateur)
     {
         parent::__construct($registry, Livres::class);
+        $this->paginateur = $this->paginateur;
+
     }
 
 //    /**
@@ -93,8 +101,9 @@ public function findBySearch(SearchData $searchData): PaginationInterface
                 ->setParameter('titre', "%{$filterData->titre}%");
         }
         if (!empty($filterData->auteur)) {
+            //dd($filterData);
             $data = $data
-                ->andWhere('p.auteur LIKE :auteur')
+                ->andWhere('p.Auteur LIKE :auteur')
                 ->setParameter('auteur', "%{$filterData->auteur}%");
         }
         if (!empty($filterData->categories)) {
@@ -117,6 +126,8 @@ public function findBySearch(SearchData $searchData): PaginationInterface
             ->getResult();
         $livres = $this->paginateur->paginate($data, $filterData->page, 8);
         return $livres;
+
+
     }
 
 }

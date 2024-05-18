@@ -39,6 +39,7 @@ class FilterType extends AbstractType
                     'placeholder' => 'Prix max'
                 ]
             ])
+            /*
             ->add('reset', ResetType::class, [
                 'label' => 'Réinitialiser',
                 'attr' => [
@@ -50,7 +51,7 @@ class FilterType extends AbstractType
                 'attr' => [
                     'class' => 'btn btn-primary'
                 ]
-            ])
+            ])*/
             ;
     }
     public function configureOptions(OptionsResolver $resolver){
