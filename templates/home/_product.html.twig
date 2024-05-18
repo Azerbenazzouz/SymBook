@@ -12,10 +12,15 @@
             {{livre.resume}}
         </p>
         <div class="d-flex justify-content-between gap-3">
-            <button class="btn btn-success w-50" type="button">Ajouter Panier</button>
+        {% if livre.qte > 0 %}
+    <a class="btn btn-success w-50" href="{{path('cart_add',{id:livre.id})}}" >Ajouter Panier</a>
+            {% else %}
+        <p class="text-danger">Temporairement en rupture de stock</p>
+          {% endif %}
             <a class="btn btn-primary w-50" type="button"
                href="{{ path('app_livre', {'id': livre.id}) }}"
             >consulter</a>
         </div>
+
     </div>
 </div>
