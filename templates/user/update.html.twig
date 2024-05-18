@@ -19,13 +19,14 @@
                     </div>
                     <div class="col-md-8">
                         <div class="card mb-3">
+                            {{ form_start(formUser) }}
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-sm-3 col-md-4">
                                         <h6 class="mb-0">Nom Complet</h6>
                                     </div>
                                     <div class="col-sm-9 col-md-8 text-secondary">
-                                            <input type="text" value="{{ user.nom }}" name="nom">
+                                        {{ form_widget(formUser.nom , {'attr': {'class': 'form-control','value' :  user.nom }}) }}
                                     </div>
                                 </div>
                                 <hr>
@@ -33,29 +34,37 @@
                                     <div class="col-sm-3 col-md-4">
                                         <h6 class="mb-0">Email</h6>
                                     </div>
-                                    <div class="col-sm-9 col-md-8 text-secondary"><span> {{ user.email }} </span></div>
+                                    <div class="col-sm-9 col-md-8 text-secondary">
+                                        {{ form_widget(formUser.email , {'attr': {'class': 'form-control','value' :  user.email}}) }}
+
+                                    </div>
                                 </div>
                                 <hr>
                                 <div class="row">
                                     <div class="col-sm-3 col-md-4">
                                         <h6 class="mb-0">Phone</h6>
                                     </div>
-                                    <div class="col-sm-9 col-md-8 text-secondary"><span>{{ user.telephone }}</span></div>
+                                    <div class="col-sm-9 col-md-8 text-secondary">
+                                        {{ form_widget(formUser.telephone , {'attr': {'class': 'form-control','value' :  user.telephone}}) }}
+                                    </div>
                                 </div>
                                 <hr>
                                 <div class="row">
                                     <div class="col-sm-3 col-md-4">
                                         <h6 class="mb-0">Address</h6>
                                     </div>
-                                    <div class="col-sm-9 col-md-8 text-secondary"><span>{{ user.adresse }}</span></div>
+                                    <div class="col-sm-9 col-md-8 text-secondary">
+                                        {{ form_widget(formUser.adresse , {'attr': {'class': 'form-control','value' :  user.adresse}}) }}
+                                    </div>
                                 </div>
                                 <hr>
                                 <div class="row">
                                     <div class="col-sm-12 d-flex justify-content-end">
-                                        <a class="btn btn-info" role="button" href="#">Edit</a>
+                                        <button type="submit" class="btn btn-info">Editer</button>
                                     </div>
                                 </div>
                             </div>
+                            {{ form_end(formUser) }}
                         </div>
                     </div>
                 </div>
