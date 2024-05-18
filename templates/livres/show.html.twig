@@ -25,9 +25,11 @@
                             {{ livre.resume }}
                         </p> 
                         <div class="d-flex justify-content-between gap-3">
-                        <button class="btn btn-info w-50 mb-3" type="button">Ajouter Panier</button>
-                        <button class="btn btn-success w-50 mb-3" type="button">Acheter</button>   
-                        
+                        {% if livre.qte > 0 %}
+                    <a class="btn btn-info w-100 mb-3" href="{{path('cart_add',{id:livre.id})}}" type="button">Ajouter Panier</a> 
+                        {% else %}
+                            <p class="text-danger">Temporairement en rupture de stock</p>
+                    {% endif %}
                         </div>
                     </div>
                 </div>
