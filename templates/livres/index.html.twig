@@ -4,6 +4,9 @@
 {% endblock %}
 {% block body %}
 	<h1>Liste des livres</h1>
+	<div class="d-flex justify-content-end mb-3">
+		<a href="{{url('admin_livres_add')}}" class="btn btn-primary">Ajouter un Livre</a>
+	</div>
 	<table class="table">
 		<tr>
 			<th>Titre</th>
@@ -22,13 +25,13 @@
 				<td>{{livre.editedAt|date('d-m-Y')}}</td>
 				<td>{{livre.prix}}</td>
 				<td>
-					<a href="{{url('admin_livres_show',{'id':livre.id})}}" class="btn btn-success btn-sm">Voir détail...</a>
+					<a href="{{url('app_livre',{'id':livre.id})}}" class="btn btn-success btn-sm">Voir détail...</a>
 				</td>
 				<td>
-					<a href="#" class="btn btn-danger btn-sm">Supprimer</a>
+					<a href="{{ url('app_admin_livres_delete',{'id':livre.id}) }}" class="btn btn-danger btn-sm">Supprimer</a>
 				</td>
 				<td>
-					<a href="#" class="btn btn-primary btn-sm">Editer</a>
+					<a href="{{ url('admin_livres_edit',{'id':livre.id})}}" class="btn btn-primary btn-sm">Editer</a>
 				</td>
 			</tr>
 		{% endfor %}

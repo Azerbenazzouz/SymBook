@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    {{ form_start(form) }}
+        {# ->add('titre')
+            ->add('isbn')
+            ->add('slug')
+            ->add('image')
+            ->add('resume')
+            ->add('editeur')
+            ->add('editedAt')
+            ->add('prix')
+            ->add('Qte')
+            ->add('Auteur')
+            ->add('categorie', EntityType::class, [
+                'class' => Categories::class,
+                'choice_label' => 'libelle',
+            ]) #}
+        <div class="form-group">
+            {{ form_label(form.titre) }}
+            {{ form_widget(form.titre,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.isbn) }}
+            {{ form_widget(form.isbn,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.slug) }}
+            {{ form_widget(form.slug,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.image) }}
+            {{ form_widget(form.image,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.resume) }}
+            {{ form_widget(form.resume,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.editeur) }}
+            {{ form_widget(form.editeur,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.editedAt) }}
+            {{ form_widget(form.editedAt,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.prix) }}
+            {{ form_widget(form.prix,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.Qte) }}
+            {{ form_widget(form.Qte,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.Auteur) }}
+            {{ form_widget(form.Auteur,{'attr':{'class':'form-control'}}) }}
+        </div>
+        <div class="form-group">
+            {{ form_label(form.categorie) }}
+            {{ form_widget(form.categorie,{'attr':{'class':'form-control'}}) }}
+        </div>
+
+
+        <div class="d-flex justify-content-end mt-4">
+            {{ form_widget(form.Enregistrer,{'attr':{'class':'btn btn-primary'}}) }}
+        </div>
+        {{ form_widget(form) }}
+    {{ form_end(form) }}
+
+{% endblock %}
