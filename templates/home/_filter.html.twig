@@ -1,4 +1,4 @@
-{{ form_start(formFilter) }}
+{{ form_start(formFilter , {attr : {class : 'filter'}}) }}
     <div class="input-group mb-2">
         <span class="input-group-text">Titre</span>
         {{ form_widget(formFilter.titre, {'attr': {'class': 'form-control'}}) }}
@@ -17,8 +17,13 @@
         {{ form_widget(formFilter.prixMax, {'attr': {'class': 'form-control', 'placeholder': 'Maximum'}}) }}
     </div>
     <hr>
-    <div class="d-flex justify-content-end gap-3"></div>
-        {{ form_widget(formFilter.reset, {'attr': {'class': 'btn btn-primary','data-bs-dismiss': 'offcanvas'}}) }}
-        {{ form_widget(formFilter.submit, {'attr': {'class': 'btn btn-success','data-bs-dismiss': 'offcanvas'}}) }}
+    <div class="d-flex justify-content-end gap-3">
+        <button class="btn btn-primary" data-bs-dismiss="offcanvas" type="reset">Annuler</button>
+        <button class="btn btn-success" data-bs-dismiss="offcanvas" type="submit">Filtrer</button>
+    </div>
+
     </div>
 {{ form_end(formFilter) }}
+
+{# https://www.youtube.com/watch?v=4uYpFjfUUbc #}
+{# https://grafikart.fr/tutoriels/filtre-produit-symfony-1211 #}
