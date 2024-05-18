@@ -59,42 +59,7 @@
             <p>Parcours et recherche de livres par titre, auteur et catégorie...</p>
             <div>
                 {% include 'home/_filter.html.twig' with {formFilter: formFilter} only %}
-                
-            {#
-                {{ form_start(formFilter) }}
-                {{ form_widget(formFilter) }}
-                <button type="submit" class="btn btn-primary w-100">Filtrer</button>
-                {{ form_end(formFilter) }}
-                 <div class="input-group mb-2">
-                    <span class="input-group-text">Titre</span>
-                    <input class="form-control" type="text">
-                </div>
-                <div class="input-group mb-2">
-                    <span class="input-group-text">Auteur</span>
-                    <input class="form-control" type="text">
-                </div>
-                <div class="input-group mb-2">
-                    <span class="input-group-text">catégorie</span>
-                    <select class="form-select">
-                        <optgroup label="catégorie">
-                            <option value="">all</option>
-                            {% for categorie in categories %}
-                                <option value="{{categorie.id}}">{{categorie.libelle}}</option>
-                            {% endfor %}
-                        </optgroup>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <span class="input-group-text">Prix</span>
-                    <input class="form-control" type="number" placeholder="Minimum" name="min_price">
-                    <input class="form-control" type="number" placeholder="Maximum" name="max_price">
-                </div>
             </div>
-            <hr>
-            <div class="d-flex justify-content-end gap-3">
-                <button class="btn btn-primary" type="button" data-bs-dismiss="offcanvas">Close</button>
-                <button class="btn btn-success" type="button" data-bs-dismiss="offcanvas">Filtrer</button>
-            </div> #}
         </div>
     </div>
 {% endblock %}

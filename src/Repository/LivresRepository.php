@@ -20,9 +20,17 @@ use Knp\Component\Pager\PaginatorInterface;
  */
 class LivresRepository extends ServiceEntityRepository
 {
+
+    /**
+     * @var PaginatorInterface $paginateur
+     */
+
+    private $paginator;
     public function __construct(ManagerRegistry $registry,private PaginatorInterface $paginateur)
     {
         parent::__construct($registry, Livres::class);
+        $this->paginateur = $this->paginateur;
+
     }
 
 //    /**
@@ -117,6 +125,8 @@ public function findBySearch(SearchData $searchData): PaginationInterface
             ->getResult();
         $livres = $this->paginateur->paginate($data, $filterData->page, 8);
         return $livres;
+
+
     }
 
 }
