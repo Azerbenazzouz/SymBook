@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\EtatOrder;
 use App\Entity\Order;
 use App\Entity\OrderDetails;
 use App\Repository\EtatOrderRepository;
@@ -15,6 +16,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('/commande', name: 'app_order_')]
@@ -89,14 +92,14 @@ class OrderController extends AbstractController
          $this->denyAccessUnlessGranted('ROLE_USER');
  
          $orders = $orderRepository->findBy(['user' => $this->getUser()]);
- 
+        // $orders->getEtatPayement();
          return $this->render('cart/order.html.twig', [
              'orders' => $orders,
          ]);
      }
 
      #[Route('/flousi/check/{etat}', name: 'flouci_check')]
-     public function flouciCheck(SessionInterface $session,LivresRepository $rep, EntityManagerInterface $em ,$etat,Request $req,PayementTypeRepository $repPT,EtatOrderRepository $repEO): Response{
+     public function flouciCheck(SessionInterface $session,LivresRepository $rep, EntityManagerInterface $em ,$etat,Request $req,PayementTypeRepository $repPT,EtatOrderRepository $repEO,MailerInterface $mailer): Response{
 
         $panier=$session->get('panier',[]);
         $payment_id=$req->query->get('payment_id');
@@ -125,6 +128,15 @@ class OrderController extends AbstractController
             $em->flush();       
             $session->remove('panier');
             $this->addFlash('message','Commande créée avec succès ');
+            $email = (new Email())
+                ->from('SymBook@admin.com')
+                ->to($this->getUser()->getUserIdentifier())
+                ->subject('Commande créée avec succès '.$order->getReference())
+                ->text('Facture de votre commande '.$order->getReference())
+                // send template
+                ->html($this->renderView('cart/facture.html.twig', ['order' => $order]));
+                
+            $mailer->send($email);
         }else{
             $this->addFlash('message_error','Commande echouée');
         }
@@ -132,4 +144,27 @@ class OrderController extends AbstractController
         return $this->redirectToRoute('app_home');
     }
     
+    #[Route('/demande/facture/{id}/{email}', name: 'demande_facture_email')]
+    public function demandeFactureEmail(OrderRepository $orderRepository, $id,$email , MailerInterface $mailer ): Response
+    {
+        $order = $orderRepository->find($id);
+
+        if($order == null){
+            $this->addFlash('message_error','Commande introuvable');
+            return $this->redirectToRoute('app_order_index');
+        }
+        
+        $email = (new Email())
+            ->from('SymBook@admin.com')
+            ->to($email)
+            ->subject('Facture de votre commande '.$order->getReference())
+            // send template
+            ->html($this->renderView('cart/facture.html.twig', ['order' => $order]));
+            
+        $mailer->send($email);
+        
+        $this->addFlash('message','Demande envoyée avec succès');
+        return $this->redirectToRoute('app_order_index');
+    }
+
 }
