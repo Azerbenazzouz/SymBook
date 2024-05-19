@@ -16,85 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class HomeController extends AbstractController
 {
-    // #[Route('/', name: 'app_home')]
-    // public function index(LivresRepository $rep,CategoriesRepository $rep1): Response
-    // {
-    //     // show the last 8 new books
-    //     $livres = $rep->findBy([], ['editedAt' => 'DESC'], 8);
-    //     $categories = $rep1->findAll();
-    //     return $this->render('home/index.html.twig', [
-    //         'controller_name' => 'HomeController',
-    //         'livres' => $livres,
-    //         'categories' => $categories
-    //     ]);
-    // }
-
-    // #[Route('/', name: 'app_home')]
-    //  public function livre(LivresRepository $rep,PaginatorInterface $paginateur, Request $request,CategoriesRepository $rep1): Response
-    //  {
-        //  $data = $rep->findAll();
-        //  $livres=$paginateur->paginate(
-        //     $data,
-        //     $request->query->getInt('page',1),
-        //     8
-        //  );
-
-        //  $categories = $rep1->findAll();
-         
-        //  $searchData= new SearchData();
-        //  $form=$this->createForm(SearchType::class,$searchData );
-        //     $form->handleRequest($request);
-
-
-        //  return $this->render('home/index.html.twig', [
-        //      'livres' => $livres,
-        //      'categories' => $categories,
-        //      'form'=>$form->createView(),
-        //  ]);
-
-        // ------------------------------
-    //     $data = $rep->findAll();
-    //     $livres=$paginateur->paginate(
-    //        $data,
-    //        $request->query->getInt('page',1),
-    //        8
-    //     );
-
-    //     $categories = $rep1->findAll();
-
-    //     $searchData= new SearchData();
-
-    //     $form=$this->createForm(SearchType::class,$searchData );
-    //     $form->handleRequest($request);
-        
-    //     if($form->isSubmitted() && $form->isValid()){
-    //        $searchData=$form->getData();
-    //        $searchData->page=$request->query->getInt('page',1);
-    //        $livres=$rep->findBySearch($searchData);
-
-    //     //    pagination
-    //           $livres=$paginateur->paginate(
-    //             $livres,
-    //             $searchData->page,
-    //             8
-    //           );
-
-    //        return $this->render('home/index.html.twig', [
-    //            'form'=>$form->createView(),
-    //            'livres' => $livres,
-    //            'categories' => $categories,
-
-    //        ]);
-
-    //     }
-
-    //     return $this->render('home/index.html.twig', [
-    //         'livres' => $livres,
-    //         'categories' => $categories,
-    //         'form'=>$form->createView(),
-    //     ]);
-         
-    // }
+    
     #[Route('/', name: 'app_home')]
     public function livre(LivresRepository $rep,PaginatorInterface $paginateur, Request $request,CategoriesRepository $rep1): Response
     {
@@ -211,6 +133,18 @@ class HomeController extends AbstractController
             'livres' => $livres,
             'categories' => $categories,
             'form'=>$form->createView()
+        ]);
+    }
+
+    // livres dans session
+    // without root
+    public function sessionLivre(Request $request)
+    {
+        $session = $request->getSession();
+        $session->set('livre', 'livre1');
+        $livre = $session->get('livre');
+        return $this->render('home/index.html.twig', [
+            'livre' => $livre
         ]);
     }
 }

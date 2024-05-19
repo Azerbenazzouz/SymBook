@@ -3,20 +3,6 @@
 {% block body %}
 
     {{ form_start(form) }}
-        {# ->add('titre')
-            ->add('isbn')
-            ->add('slug')
-            ->add('image')
-            ->add('resume')
-            ->add('editeur')
-            ->add('editedAt')
-            ->add('prix')
-            ->add('Qte')
-            ->add('Auteur')
-            ->add('categorie', EntityType::class, [
-                'class' => Categories::class,
-                'choice_label' => 'libelle',
-            ]) #}
         <div class="form-group">
             {{ form_label(form.titre) }}
             {{ form_widget(form.titre,{'attr':{'class':'form-control'}}) }}

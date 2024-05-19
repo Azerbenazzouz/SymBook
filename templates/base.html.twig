@@ -26,6 +26,7 @@
 						{% if is_granted('ROLE_ADMIN') %}
 							<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('admin_livres') }}">Liste des Livres</a>
 							<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('admin_categorie') }}">Liste des Categories</a>
+							<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_admin_gestion_user_index') }}">Liste des Utilisateur</a>
 						{% endif %}
 
 					{% endif %}
@@ -53,7 +54,10 @@
 				<div class="container-fluid">
 					<a class="navbar-brand fs-3 fw-bold text-primary" href="{{ path('app_home') }}">SymBook</a>
 					<button class="btn rounded-5 px-3 bg-success btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#cart-canvas" aria-controls="cart-canvas">
-					<span class="badge bg-primary rounded me-2">0</span><i class="fas fa-shopping-cart me-2"></i>0.000 DT</button>
+						<span class="badge bg-primary rounded me-2" id="button-cart-Qte">0</span>
+						<i class="fas fa-shopping-cart me-2"></i> 
+						<span id="button-cart-total"></span>
+					</button>
 				</div>
 			</nav>
 		</section>
