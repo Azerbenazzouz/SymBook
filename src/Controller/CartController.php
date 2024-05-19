@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CartController extends AbstractController
 {
     #[Route('/add/{id}', name: 'add')]
-    public function add(Livres $livre , SessionInterface $session )
+    public function add(Livres $livre , SessionInterface $session ) : Response
     {
        $id=$livre->getId();
        $panier=$session->get('panier',[]);
