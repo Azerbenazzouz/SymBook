@@ -30,6 +30,8 @@
 
 <script>
     // load cart data
+    const urlBase = window.location.origin;
+
     document.addEventListener('DOMContentLoaded', function () {
         refreshData();              
     });
@@ -38,7 +40,7 @@
     add = async(element,id) => {
         const cartTotal = document.getElementById('cart-total');
         const buttonCartTotal = document.getElementById('button-cart-total');
-        await fetch('https://127.0.0.1:8000/cart/api_add/' + id)
+        await fetch(urlBase+'/cart/api_add/' + id)
         .then(response => response.json());
         refreshData();
     }
@@ -46,7 +48,7 @@
     remove = async(element,id) => {
         const cartTotal = document.getElementById('cart-total');
         const buttonCartTotal = document.getElementById('button-cart-total');
-        await fetch('https://127.0.0.1:8000/cart/api_remove/' + id)
+        await fetch(urlBase+'/cart/api_remove/' + id)
         .then(response => response.json())
         refreshData();
     }
@@ -55,14 +57,14 @@
     update = async(element,id) => {
         const cartTotal = document.getElementById('cart-total');
         const buttonCartTotal = document.getElementById('button-cart-total');
-        await fetch('https://127.0.0.1:8000/cart/api_qte/' + id + '/' + element.value)
+        await fetch(urlBase+'/cart/api_qte/' + id + '/' + element.value)
         .then(response => response.json());
         refreshData();
     }   
 
 
     addAndRefreshOnlyDataAndInputs = async(element,id) => {
-        await fetch('https://127.0.0.1:8000/cart/api_add_Livre/' + id)
+        await fetch(urlBase+'/cart/api_add_Livre/' + id)
         .then(response => response.json())
         .then(data => {
             UpdateView(data);
@@ -142,7 +144,7 @@
 
     refreshData = async() => {
         changeView('loading');
-        await fetch('https://127.0.0.1:8000/cart/get')
+        await fetch(urlBase+'/cart/get')
         .then(response => response.json())
         .then(data => {
             UpdateView(data);
