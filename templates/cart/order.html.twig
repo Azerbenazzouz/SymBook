@@ -1,0 +1,39 @@
+{# templates/order/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Commandes{% endblock %}
+
+{% block body %}
+    <h1>Mes Commandes</h1>
+
+    {% if orders is empty %}
+        <p>Vous n'avez pas encore passé de commande.</p>
+    {% else %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Référence</th>
+                    <th>Date</th>
+                    <th>Détails</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.reference }}</td>
+                        <td>{{ order.createAt|date('d/m/Y H:i') }}</td>
+                        <td>
+                            <ul>
+                                {% for detail in order.orderDetails %}
+                                    <li>{{ detail.livre.titre }} - {{ detail.quantity }} x {{ detail.price }} TND</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td>{{ order.getTotal() }} TND</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
