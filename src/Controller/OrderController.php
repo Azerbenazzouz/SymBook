@@ -41,9 +41,6 @@ class OrderController extends AbstractController
 
             $order->addOrderDetail($ordeDetails);
 
-
-            
-
         }
         $em->persist($order);
         $em->flush();
