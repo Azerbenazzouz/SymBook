@@ -4,6 +4,16 @@
 {% block title %}Mes Commandes{% endblock %}
 
 {% block body %}
+        {% for message in app.flashes('message') %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('message_error') %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
     <h1>Mes Commandes</h1>
 
     {% if orders is empty %}
@@ -15,7 +25,11 @@
                     <th>Référence</th>
                     <th>Date</th>
                     <th>Détails</th>
+                    <th>Status de la commande</th>
+                    <th>Type de paiement</th>
+                    <th>Etat de paiement</th>
                     <th>Total</th>
+                    <th>Facture</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,10 +44,27 @@
                                 {% endfor %}
                             </ul>
                         </td>
+                        <td>{{ order.Etat.etat }}</td>
+                        <td>{{ order.payementtype.type }}</td>
+                        <td>{{ order.etatPayement == 1 ? 'Payée' : 'Non payée' }}</td>
                         <td>{{ order.getTotal() }} TND</td>
+                        <td>
+                            <button 
+                                class="btn btn-info" 
+                                id="Facture" 
+                                onClick="demandeFacture('{{order.id}}','{{app.user.email}}')"
+                            >
+                                Facture
+                            </button>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     {% endif %}
+<script>
+    demandeFacture = (id,email) => {
+        window.location.href = `${window.location.origin}/commande/demande/facture/${id}/${email}`;
+    }
+</script>
 {% endblock %}
