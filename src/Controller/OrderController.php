@@ -202,4 +202,17 @@ class OrderController extends AbstractController
         return $this->redirectToRoute('app_order_index');
     }
 
+    // gestion des commandes
+    #[Route('/gestion', name: 'gestion')]
+    public function gestion(OrderRepository $orderRepository): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $orders = $orderRepository->findAll();
+
+        return $this->render('order/gestion.html.twig', [
+            'orders' => $orders,
+        ]);
+    }
+
 }

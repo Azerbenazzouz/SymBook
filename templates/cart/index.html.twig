@@ -62,19 +62,19 @@
                 <h5 class="text-center mb-3">Informations de livraison</h5>
                 <div class="d-flex justify-content-between">
                     <h6 class="mb-2">Nom et prénom : </h6>
-                    <h6>Azer ben azzouz</h6>
+                    <h6>{{ user.nom }}</h6>
                 </div>
                 <div class="d-flex justify-content-between">
                     <h6 class="mb-2">Adresse : </h6>
-                    <h6>12 rue de la paix, 1000 Tunis</h6>
+                    <h6>{{ user.adresse }}</h6>
                 </div>
                 <div class="d-flex justify-content-between">
                     <h6 class="mb-2">Téléphone : </h6>
-                    <h6>12345678</h6>
+                    <h6>{{ user.telephone }}</h6>
                 </div>
                 <div class="d-flex justify-content-between">
                     <h6 class="mb-2">Email : </h6>
-                    <h6>benazzouzazer@gmail.com</h6>
+                    <h6>{{ user.email }}</h6>
                 </div>
                 <div class="d-flex justify-content-end mt-2">
                     <a class="btn btn-primary" href="{{path('app_user_update')}}">Modifier vos informations</a>
