@@ -1,18 +1,151 @@
+{# templates/cart.html.twig #}
+
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cart-canvas">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Votre Panier</h5><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="offcanvas"></button>
+        <h5 class="offcanvas-title">Votre Panier</h5>
+        <button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="offcanvas"></button>
     </div>
-    {# Les Liste des produit #}
     <div class="offcanvas-body">
-        {# product card #}
-        {% include '_shoppingCartProduit.html.twig' %}
-        {% include '_shoppingCartProduit.html.twig' %}
-        {% include '_shoppingCartProduit.html.twig' %}
-        {% include '_shoppingCartProduit.html.twig' %}
-
-        {# End product card #}
+        <div id="cart-products">
+            <!-- Products will be injected here by JavaScript -->
+        </div>
     </div>
     <hr>
-    <h5 class="text-end mx-3">0,000 TD</h5>
-    <div class="d-flex justify-content-center mb-3"><button class="btn btn-success" type="button">Passer votre commande</button></div>
+    <h5 class="text-end mx-3" id="cart-total">0,000 TD</h5>
+    <div class="d-flex justify-content-center mb-3">
+        <button class="btn btn-success" type="button">Passer votre commande</button>
+    </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const cartCanvas = document.getElementById('cart-canvas');
+    const cartProductsDiv = document.getElementById('cart-products');
+    const cartTotal = document.getElementById('cart-total');
+    const buttonCartQte = document.getElementById('button-cart-Qte');
+    const buttonCartTotal = document.getElementById('button-cart-total'); 
+
+    //cartCanvas.addEventListener('show.bs.offcanvas', function () {
+//    body.addEventListener('load', function () {
+        fetch('{{ path("cart_get") }}')
+            .then(response => response.json())
+            .then(data => {
+                cartProductsDiv.innerHTML = ''; // Clear existing products
+
+
+                data.data.forEach(produit => {
+                    const productHtml = `
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <img alt="white book on black textile" class="img-thumbnail w-100" src=${produit.image}>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <h4>${produit.titreLivre}</h4>
+                                            <h6 class="text-muted mb-2">${produit.editeur}</h6>
+                                            <div class="input-group">
+                                                <button class="btn btn-primary" type="button" onclick="add(this,${produit.id})">
+                                                    <i class="fas fa-caret-up"></i>
+                                                </button>
+                                                <input id="cart-prod-qte" class="form-control text-center number-without-arrows" type="number" inputmode="numeric" value="${produit.qte}" min="0" step="1" idprod="${produit.id}">
+                                                <button class="btn btn-primary" type="button" onclick="remove(this,${produit.id})">
+                                                    <i class="fas fa-caret-down" style="font-size: 17px;"></i>
+                                                </button>
+                                            <input type="hidden" value="${produit.id}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    cartProductsDiv.insertAdjacentHTML('beforeend', productHtml);
+                    buttonCartQte.textContent = data.data.length;
+                });
+
+                buttonCartTotal.textContent = `${data.total.toFixed(3)} TD`;
+                cartTotal.textContent = `${data.total.toFixed(3)} TD`;
+            });
+    });
+//});
+
+    add = (element,id) => {
+        const cartTotal = document.getElementById('cart-total');
+        const buttonCartTotal = document.getElementById('button-cart-total');
+        fetch('https://127.0.0.1:8000/cart/api_add/' + id)
+            .then(response => response.json())
+            .then(data => {
+                let input = element.parentElement.querySelector('input');
+                input.value = data.qte;
+
+                let total = data.total + data.prix;
+
+                cartTotal.textContent = `${total.toFixed(3)} TD`;
+                buttonCartTotal.textContent = `${total.toFixed(3)} TD`;
+            });
+    }
+
+    remove = (element,id) => {
+        const cartTotal = document.getElementById('cart-total');
+        const buttonCartTotal = document.getElementById('button-cart-total');
+        fetch('https://127.0.0.1:8000/cart/api_remove/' + id)
+        .then(response => response.json())
+        .then(data => {
+            let input = element.parentElement.querySelector('input');
+            input.value = data.qte;
+
+            let total = data.total + data.prix;
+
+            cartTotal.textContent = `${total.toFixed(3)} TD`;
+            buttonCartTotal.textContent = `${total.toFixed(3)} TD`;
+
+            if (parseInt(input.value) === 0) {
+                element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
+            }
+        });
+    }
+
+
+    update = (element,id) => {
+        const cartTotal = document.getElementById('cart-total');
+        const buttonCartTotal = document.getElementById('button-cart-total');
+        fetch('https://127.0.0.1:8000/cart/api_qte/' + id + '/' + element.value)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            let total = data.total;
+
+            cartTotal.textContent = `${total.toFixed(3)} TD`;
+            buttonCartTotal.textContent = `${total.toFixed(3)} TD`;
+
+            if (parseInt(element.value) === 0) {
+                element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
+            }
+        });
+    }
+
+    const inputQteLivres = document.querySelectorAll('input[id="cart-prod-qte"]');
+    const body = document.querySelector('body');
+
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log(inputQteLivres);
+        inputQteLivres.forEach(input => {
+            input.addEventListener('change', function () {
+                update(this,this.getAttribute('idprod'));
+                console.log(this.getAttribute('idprod'));
+            });
+        console.log(inputQteLivres);
+        });
+    });
+    {# console.log(inputQteLivres);
+
+    inputQteLivres.forEach(input => {
+        input.addEventListener('change', function () {
+            update(this,this.getAttribute('idprod'));
+            console.log(this.getAttribute('idprod'));
+        });
+    }); #}
+</script>
