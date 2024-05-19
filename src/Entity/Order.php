@@ -41,7 +41,7 @@ class Order
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?payementType $payement_type = null;
+    private ?PayementType $payement_type = null;
 
     public function __construct()
     {
@@ -153,12 +153,12 @@ class Order
         return $this;
     }
 
-    public function getPayementType(): ?payementType
+    public function getPayementType(): ?PayementType
     {
         return $this->payement_type;
     }
 
-    public function setPayementType(?payementType $payement_type): static
+    public function setPayementType(?PayementType $payement_type): static
     {
         $this->payement_type = $payement_type;
 

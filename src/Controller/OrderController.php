@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Order;
 use App\Entity\OrderDetails;
+use App\Repository\EtatOrderRepository;
 use App\Repository\LivresRepository;
 use App\Repository\OrderRepository;
+use App\Repository\PayementTypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -94,7 +96,7 @@ class OrderController extends AbstractController
      }
 
      #[Route('/flousi/check/{etat}', name: 'flouci_check')]
-     public function flouciCheck(SessionInterface $session,LivresRepository $rep, EntityManagerInterface $em ,$etat,Request $req): Response{
+     public function flouciCheck(SessionInterface $session,LivresRepository $rep, EntityManagerInterface $em ,$etat,Request $req,PayementTypeRepository $repPT,EtatOrderRepository $repEO): Response{
 
         $panier=$session->get('panier',[]);
         $payment_id=$req->query->get('payment_id');
@@ -113,9 +115,12 @@ class OrderController extends AbstractController
             $ordeDetails->setPrice($price);
             $ordeDetails->setQuantity($quantity);
             $order->addOrderDetail($ordeDetails);
+            $order->setPayementType($repPT->findOneBy(['type'=>'FLOUCI']));
         }
         
         if($etat == "success" && $payment_id == $session->get('payment_id')){
+            $order->setEtatPayement(true);
+            $order->setEtat($repEO->findOneBy(['etat'=>'confirmer']));
             $em->persist($order);
             $em->flush();       
             $session->remove('panier');
