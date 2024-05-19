@@ -9,12 +9,12 @@
     <section>
         <section>
         {% for message in app.flashes('message') %}
-            <div class="alert alert-success" role="alert">
+            <div class="alert alert-success" role="alert" id="alert" name="alert_success">
                 {{ message }}
             </div>
         {% endfor %}
         {% for message in app.flashes('message_error') %}
-            <div class="alert alert-danger" role="alert">
+            <div class="alert alert-danger" role="alert" id="alert" name="alert_error">
                 {{ message }}
             </div>
         {% endfor %}
@@ -70,4 +70,22 @@
             </div>
         </div>
     </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var alert = document.getElementById('alert');
+            if(alert.getAttribute('name') == 'alert_success'){
+                var audio = new Audio('{{asset('audio/alert.m4a')}}');
+                audio.play();
+            }
+        if (alert) {
+            setTimeout(function() {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+    });
+
+
+</script>
+
+
 {% endblock %}

@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Entity\Livres;
 use App\Repository\LivresRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +29,7 @@ class CartController extends AbstractController
     }
 
     #[Route('/', name: 'index')]
-    public function index(SessionInterface $session,LivresRepository $rep  ): Response
+    public function index(SessionInterface $session,LivresRepository $rep,UserRepository $userRepository): Response
     {
         $panier=$session->get('panier',[]);
         $data=[];
@@ -39,15 +40,12 @@ class CartController extends AbstractController
             $data[]=[
                 'livre'=>$livre,
                 'qte'=>$qte,
-            
             ];
             $total+= $livre->getPrix() * $qte;
           
         }
-       
-        return $this->render('cart/index.html.twig',compact('data','total'));
-     
-         
+        $user = $userRepository->find($this->getUser());
+        return $this->render('cart/index.html.twig',compact('data','total','user'));       
     }
 
     #[Route('/remove/{id}', name: 'remove')]
