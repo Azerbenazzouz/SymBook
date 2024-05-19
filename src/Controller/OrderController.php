@@ -24,7 +24,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class OrderController extends AbstractController
 {
     #[Route('/ajout', name: 'add')]
-    public function add(SessionInterface $session,LivresRepository $rep): Response
+    public function add(SessionInterface $session,LivresRepository $rep,Request $req,PayementTypeRepository $repPT,EtatOrderRepository $repEO,EntityManagerInterface $em,MailerInterface $mailer): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
@@ -43,46 +43,81 @@ class OrderController extends AbstractController
         
         // convertir total to string
         $total = number_format(($total)*1000,0,'.','');
-        // url de base de l'application et les urls de redirection
-        $baseUrl = $this->generateUrl('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $successUrl = $baseUrl . "commande/flousi/check/success";
-        $faildUrl = $baseUrl . "commande/flousi/check/faild";
-        //  Appel de l'API Flouci pour générer le lien de paiement
-        $curl = curl_init();
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://developers.flouci.com/api/generate_payment',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS =>'{
-                "app_token": "fc49d690-deca-424a-9f4d-60ac5e9ac7bd",
-                "app_secret": "d28fc2eb-4af2-41b6-8bdb-8534031ed552",
-                "accept_card": "true",
-                "amount": '.$total.',
-                "success_link": "'.$successUrl.'",
-                "fail_link": "'.$faildUrl.'",
-                "session_timeout_secs": 1200,
-                "developer_tracking_id": "<your_internal_tracking_id>"
-            }',
-            CURLOPT_HTTPHEADER => array(
-                'Content-Type: application/json'
-            ),
-        ));
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $response = json_decode($response,true);
-        
-        if($response['code']==0){
-            $session->set('payment_id',$response['result']['payment_id']);
-            return $this->redirect($response['result']['link']);
-        }else{
-            $this->addFlash('message_error','Commande echouée ');
-            return $this->redirectToRoute('app_home');
-        }       
+    
+        switch ($req->query->get('payment')) {
+            case 'flouci':
+                // url de base de l'application et les urls de redirection
+                $baseUrl = $this->generateUrl('app_home', [], UrlGeneratorInterface::ABSOLUTE_URL);
+                $successUrl = $baseUrl . "commande/flousi/check/success";
+                $faildUrl = $baseUrl . "commande/flousi/check/faild";
+                //  Appel de l'API Flouci pour générer le lien de paiement
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => 'https://developers.flouci.com/api/generate_payment',
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_ENCODING => '',
+                    CURLOPT_MAXREDIRS => 10,
+                    CURLOPT_TIMEOUT => 0,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_CUSTOMREQUEST => 'POST',
+                    CURLOPT_POSTFIELDS =>'{
+                        "app_token": "fc49d690-deca-424a-9f4d-60ac5e9ac7bd",
+                        "app_secret": "d28fc2eb-4af2-41b6-8bdb-8534031ed552",
+                        "accept_card": "true",
+                        "amount": '.$total.',
+                        "success_link": "'.$successUrl.'",
+                        "fail_link": "'.$faildUrl.'",
+                        "session_timeout_secs": 1200,
+                        "developer_tracking_id": "<your_internal_tracking_id>"
+                    }',
+                    CURLOPT_HTTPHEADER => array(
+                        'Content-Type: application/json'
+                    ),
+                ));
+                $response = curl_exec($curl);
+                curl_close($curl);
+                $response = json_decode($response,true);
+                
+                if($response['code']==0){
+                    $session->set('payment_id',$response['result']['payment_id']);
+                    return $this->redirect($response['result']['link']);
+                }else{
+                    $this->addFlash('message_error','Commande echouée ');
+                    return $this->redirectToRoute('app_home');
+                }   
+            case 'cod':
+                $order = new Order();
+                $order->setUser($this->getUser());
+                $order->setReference(uniqid());
+                foreach ($panier as $item=>$quantity){
+                    $ordeDetails=new OrderDetails();
+                    $livre=$rep->find($item);
+                    $price=$livre->getPrix();
+                    $ordeDetails->setLivre($livre);
+                    $ordeDetails->setPrice($price);
+                    $ordeDetails->setQuantity($quantity);
+                    $order->addOrderDetail($ordeDetails);
+                    $order->setPayementType($repPT->findOneBy(['type'=>'COD']));
+                }
+                    $order->setEtatPayement(false);
+                    $order->setEtat($repEO->findOneBy(['etat'=>'en attente']));
+                    $em->persist($order);
+                    $em->flush();       
+                    $session->remove('panier');
+                    $this->addFlash('message','Commande créée avec succès ');
+                    $email = (new Email())
+                        ->from('SymBook@admin.com')
+                        ->to($this->getUser()->getUserIdentifier())
+                        ->subject('Commande créée avec succès '.$order->getReference())
+                        ->text('Facture de votre commande '.$order->getReference())
+                        ->html($this->renderView('cart/facture.html.twig', ['order' => $order]));
+                    $mailer->send($email);
+                return $this->redirectToRoute('app_home');            
+            default:
+                $this->addFlash('message_error','Commande echouée ');
+                return $this->redirectToRoute('app_home');
+        }
     }
 
      // Ajoutez cette méthode
@@ -91,8 +126,8 @@ class OrderController extends AbstractController
      {
          $this->denyAccessUnlessGranted('ROLE_USER');
  
-         $orders = $orderRepository->findBy(['user' => $this->getUser()]);
-        // $orders->getEtatPayement();
+         $orders = $orderRepository->findBy(['user' => $this->getUser()],['create_at'=>'DESC']);
+
          return $this->render('cart/order.html.twig', [
              'orders' => $orders,
          ]);
