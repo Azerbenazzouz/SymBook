@@ -51,9 +51,30 @@ jobs:
       - run: ./php-cs-fixer --diff --dry-run -v --allow-risky=yes fix
       - run: php -d memory_limit=-1 vendor/bin/phpstan analyse src --level max
       - run: php -d memory_limit=-1 vendor/bin/simple-phpunit
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:MJaQ/0K3wTCk+l/C2ZcEqWPMkVIfilcoRG10DnqZCrU" # SSH Key Fingerprint found in CircleCI
+      - run:
+          name: Install Deployer
+          command: |
+            curl -LO https://deployer.org/deployer.phar
+            sudo mv deployer.phar /usr/local/bin/dep
+            sudo chmod +x /usr/local/bin/dep
+      - run:
+          name: Deploy
+          command: | # Add our test server as "known host"
+            echo '|1|eqoArfioX6VlupKTFQ6vdavJgZk=|0iGC0C/E1U5oPZGuO1Xd0Gux8oU= ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==' >> ~/.ssh/known_hosts
+            dep deploy
 
 workflows:
   version: 2
   notify_deploy:
     jobs:
       - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop # Only deploy builds on th develop branch

@@ -100,6 +100,7 @@
         }
     },
     "require-dev": {
+        "deployer/deployer": "^7.4",
         "doctrine/doctrine-fixtures-bundle": "^3.6",
         "friendsofphp/php-cs-fixer": "^3.57",
         "phpstan/phpstan": "^1.11",
