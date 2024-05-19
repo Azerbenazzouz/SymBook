@@ -8,6 +8,16 @@
     {# List des livres #}
     <section>
         <section>
+        {% for message in app.flashes('message') %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('message_error') %}
+            <div class="alert alert-danger" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
             <div class="d-flex justify-content-between container py-3 gap-3">
                 <div>
                     <button class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#filter-canvas" aria-controls="filter-canvas">
