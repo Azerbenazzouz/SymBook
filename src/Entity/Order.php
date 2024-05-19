@@ -32,6 +32,17 @@ class Order
     #[ORM\OneToMany(targetEntity: OrderDetails::class, mappedBy: 'orders', orphanRemoval: true, cascade:['persist'])]
     private Collection $orderDetails;
 
+    #[ORM\ManyToOne(inversedBy: 'orders')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?EtatOrder $etat = null;
+
+    #[ORM\Column]
+    private ?bool $etatPayement = null;
+
+    #[ORM\ManyToOne(inversedBy: 'orders')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?payementType $payement_type = null;
+
     public function __construct()
     {
         $this->orderDetails = new ArrayCollection();
@@ -116,6 +127,42 @@ class Order
             $total += $detail->getPrice() * $detail->getQuantity();
         }
         return $total;
+    }
+
+    public function getEtat(): ?EtatOrder
+    {
+        return $this->etat;
+    }
+
+    public function setEtat(?EtatOrder $etat): static
+    {
+        $this->etat = $etat;
+
+        return $this;
+    }
+
+    public function isEtatPayement(): ?bool
+    {
+        return $this->etatPayement;
+    }
+
+    public function setEtatPayement(bool $etatPayement): static
+    {
+        $this->etatPayement = $etatPayement;
+
+        return $this;
+    }
+
+    public function getPayementType(): ?payementType
+    {
+        return $this->payement_type;
+    }
+
+    public function setPayementType(?payementType $payement_type): static
+    {
+        $this->payement_type = $payement_type;
+
+        return $this;
     }
 
 }
