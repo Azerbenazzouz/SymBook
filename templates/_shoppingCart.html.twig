@@ -142,6 +142,7 @@
         }
     }
 
+
     refreshData = async() => {
         changeView('loading');
         await fetch(urlBase+'/cart/get')
@@ -155,6 +156,7 @@
         window.location.href = '{{path('app_order_add')}}';
         window.location.href = '{{path('cart_index')}}';
     }
+
 
     changeView = (etat) =>{
         const cartProductsDiv = document.getElementById('cart-products'); // cart products div
