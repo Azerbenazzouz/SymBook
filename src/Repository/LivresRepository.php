@@ -135,5 +135,14 @@ public function findByFilter(FilterData $filterData): PaginationInterface
 
     }
 
+    public function findByTitle(string $title)
+    {
+        return $this->createQueryBuilder('l')
+            ->where('l.titre LIKE :title')
+            ->setParameter('title', '%' . $title . '%')
+            ->getQuery()
+            ->getResult();
+    }
+
    
 }

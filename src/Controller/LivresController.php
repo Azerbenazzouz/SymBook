@@ -19,10 +19,14 @@ class LivresController extends AbstractController
 {
 
     #[Route('/admin/livres', name: 'admin_livres')]
-    public function index(LivresRepository $rep): Response
+    public function index(LivresRepository $rep,Request $request): Response
     {
-        $livres = $rep->findAll();
-        //dd($livres);
+        $searchTitle =$request->query->get('title');
+        if ($searchTitle) {
+            $livres = $rep->findByTitle($searchTitle);
+        } else {
+            $livres = $rep->findAll();
+        }
         return $this->render('Livres/index.html.twig', ['livres' => $livres]);
     }
 

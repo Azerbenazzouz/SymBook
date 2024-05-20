@@ -97,7 +97,7 @@ class AdminController extends AbstractController
             'totalOrders' => $totalOrders,
             'mostOrderedBook' => $mostOrderedBook,
     'lastOrderDate' => $lastOrderDate,
-    'dayOfWeek' => (new \DateTime())->format('l'),
+    //'dayOfWeek' => (new \DateTime())->format('l'),
           
            
         ]);
