@@ -68,21 +68,23 @@ class AdminController extends AbstractController
         $orders = $orderRepository->findAll();
         $totalOrders = count($orders);
 
-       // Query to find the Livre with the maximum quantity ordered
-       $mostOrderedBookId = $orderDetailsRepository->createQueryBuilder('od')
-       ->select('IDENTITY(od.livre) AS bookId, MAX(od.quantity) AS maxQuantity')
-       ->groupBy('od.livre')
-       ->orderBy('maxQuantity', 'DESC')
-       ->setMaxResults(1)
-       ->getQuery()
-       ->getOneOrNullResult();
-
-   // If there is a result, find the Livre entity by its ID
-   $mostOrderedBook = null;
-   if ($mostOrderedBookId !== null) {
-       $mostOrderedBook = $livresRepository->find($mostOrderedBookId['bookId']);
-
-   }
+        $mostOrderedBookData = $orderDetailsRepository->createQueryBuilder('od')
+        ->select('IDENTITY(od.livre) AS bookId, SUM(od.quantity) AS totalQuantity, MAX(o.create_at) AS lastOrderDate')
+        ->join('od.orders', 'o')
+        ->groupBy('od.livre')
+        ->orderBy('totalQuantity', 'DESC')
+        ->setMaxResults(1)
+        ->getQuery()
+        ->getOneOrNullResult();
+    
+    // If there is a result, find the Livre entity by its ID
+    $mostOrderedBook = null;
+    $lastOrderDate = null;
+    if ($mostOrderedBookData !== null) {
+        $mostOrderedBook = $livresRepository->find($mostOrderedBookData['bookId']);
+        $lastOrderDate = $mostOrderedBookData['lastOrderDate'];
+    }
+    
 
 
 
@@ -93,7 +95,9 @@ class AdminController extends AbstractController
             'totalUsers' => $totalUsers, 
             'totalOrders' => $totalOrders,
             'mostOrderedBook' => $mostOrderedBook,
-         
+    'lastOrderDate' => $lastOrderDate,
+    'dayOfWeek' => (new \DateTime())->format('l'),
+          
            
         ]);
     }
