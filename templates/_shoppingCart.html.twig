@@ -9,143 +9,172 @@
         <div id="cart-products">
             <!-- Products will be injected here by JavaScript -->
         </div>
+        
+        {# When No product Added #}
+        <div class="text-center" id="cart-empty"  style="display: none;">
+            <h5 class="text-muted mt-5">Votre panier est vide</h5>
+        </div>
+        {# When Operation is in progress in the center of the div horizontal and vertical #}
+        <div class="text-center mt-5" id="cart-loading"  style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
     </div>
     <hr>
     <h5 class="text-end mx-3" id="cart-total">0,000 TD</h5>
     <div class="d-flex justify-content-center mb-3">
-        <button class="btn btn-success" type="button">Passer votre commande</button>
+        <button id="commander-prod" class="btn btn-success" type="button" onclick="commander()" >Passer votre commande</button>
     </div>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const cartCanvas = document.getElementById('cart-canvas');
-    const cartProductsDiv = document.getElementById('cart-products');
-    const cartTotal = document.getElementById('cart-total');
-    const buttonCartQte = document.getElementById('button-cart-Qte');
-    const buttonCartTotal = document.getElementById('button-cart-total'); 
+    // load cart data
+    const urlBase = window.location.origin;
 
-    //cartCanvas.addEventListener('show.bs.offcanvas', function () {
-//    body.addEventListener('load', function () {
-        fetch('{{ path("cart_get") }}')
-            .then(response => response.json())
-            .then(data => {
-                cartProductsDiv.innerHTML = ''; // Clear existing products
+    document.addEventListener('DOMContentLoaded', function () {
+        refreshData();              
+    });
 
 
-                data.data.forEach(produit => {
-                    const productHtml = `
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-md-5">
-                                            <img alt="white book on black textile" class="img-thumbnail w-100" src=${produit.image}>
-                                        </div>
-                                        <div class="col-md-7">
-                                            <h4>${produit.titreLivre}</h4>
-                                            <h6 class="text-muted mb-2">${produit.editeur}</h6>
-                                            <div class="input-group">
-                                                <button class="btn btn-primary" type="button" onclick="add(this,${produit.id})">
-                                                    <i class="fas fa-caret-up"></i>
-                                                </button>
-                                                <input id="cart-prod-qte" class="form-control text-center number-without-arrows" type="number" inputmode="numeric" value="${produit.qte}" min="0" step="1" idprod="${produit.id}">
-                                                <button class="btn btn-primary" type="button" onclick="remove(this,${produit.id})">
-                                                    <i class="fas fa-caret-down" style="font-size: 17px;"></i>
-                                                </button>
-                                            <input type="hidden" value="${produit.id}">
-                                            </div>
+    add = async(element,id) => {
+        const cartTotal = document.getElementById('cart-total');
+        const buttonCartTotal = document.getElementById('button-cart-total');
+        await fetch(urlBase+'/cart/api_add/' + id)
+        .then(response => response.json());
+        refreshData();
+    }
+
+    remove = async(element,id) => {
+        const cartTotal = document.getElementById('cart-total');
+        const buttonCartTotal = document.getElementById('button-cart-total');
+        await fetch(urlBase+'/cart/api_remove/' + id)
+        .then(response => response.json())
+        refreshData();
+    }
+
+
+    update = async(element,id) => {
+        const cartTotal = document.getElementById('cart-total');
+        const buttonCartTotal = document.getElementById('button-cart-total');
+        await fetch(urlBase+'/cart/api_qte/' + id + '/' + element.value)
+        .then(response => response.json());
+        refreshData();
+    }   
+
+
+    addAndRefreshOnlyDataAndInputs = async(element,id) => {
+        await fetch(urlBase+'/cart/api_add_Livre/' + id)
+        .then(response => response.json())
+        .then(data => {
+            UpdateView(data);
+        });        
+    }
+
+    UpdateView = (data) =>{
+        const cartProductsDiv = document.getElementById('cart-products');
+        const cartTotal = document.getElementById('cart-total');
+        const buttonCartQte = document.getElementById('button-cart-Qte');
+        const buttonCartTotal = document.getElementById('button-cart-total');
+
+        cartProductsDiv.innerHTML = ''; // Clear existing products
+
+
+        data.data.forEach(produit => {
+            const productHtml = `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <img alt="white book on black textile" class="img-thumbnail w-100" src=${produit.image}>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <h4>${produit.titreLivre}</h4>
+                                        <h6 class="text-muted mb-2">${produit.editeur}</h6>
+                                        <div class="input-group">
+                                            <button class="btn btn-primary" type="button" onclick="add(this,${produit.id})" id="plus_prod" idprod="${produit.id}">
+                                                <i class="fas fa-caret-up"></i>
+                                            </button>
+                                            <input id="cart-prod-qte" class="form-control text-center number-without-arrows" type="number" inputmode="numeric" value="${produit.qte}" min="0" step="1" idprod="${produit.id}">
+                                            <button class="btn btn-primary" type="button" onclick="remove(this,${produit.id})" id="minus_prod" idprod="${produit.id}">
+                                                <i class="fas fa-caret-down" style="font-size: 17px;"></i>
+                                            </button>
+                                        <input type="hidden" value="${produit.id}">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    `;
+                    </div>
+                `;
 
-                    cartProductsDiv.insertAdjacentHTML('beforeend', productHtml);
-                    buttonCartQte.textContent = data.data.length;
-                });
-
-                buttonCartTotal.textContent = `${data.total.toFixed(3)} TD`;
-                cartTotal.textContent = `${data.total.toFixed(3)} TD`;
-            });
-    });
-//});
-
-    add = (element,id) => {
-        const cartTotal = document.getElementById('cart-total');
-        const buttonCartTotal = document.getElementById('button-cart-total');
-        fetch('https://127.0.0.1:8000/cart/api_add/' + id)
-            .then(response => response.json())
-            .then(data => {
-                let input = element.parentElement.querySelector('input');
-                input.value = data.qte;
-
-                let total = data.total + data.prix;
-
-                cartTotal.textContent = `${total.toFixed(3)} TD`;
-                buttonCartTotal.textContent = `${total.toFixed(3)} TD`;
-            });
-    }
-
-    remove = (element,id) => {
-        const cartTotal = document.getElementById('cart-total');
-        const buttonCartTotal = document.getElementById('button-cart-total');
-        fetch('https://127.0.0.1:8000/cart/api_remove/' + id)
-        .then(response => response.json())
-        .then(data => {
-            let input = element.parentElement.querySelector('input');
-            input.value = data.qte;
-
-            let total = data.total + data.prix;
-
-            cartTotal.textContent = `${total.toFixed(3)} TD`;
-            buttonCartTotal.textContent = `${total.toFixed(3)} TD`;
-
-            if (parseInt(input.value) === 0) {
-                element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
-            }
+            cartProductsDiv.insertAdjacentHTML('beforeend', productHtml);
+            buttonCartQte.textContent = data.data.length;
         });
-    }
+
+        buttonCartQte.textContent = data.data.length;
+        buttonCartTotal.textContent = `${data.total.toFixed(3)} TD`;
+        cartTotal.textContent = `${data.total.toFixed(3)} TD`;
 
 
-    update = (element,id) => {
-        const cartTotal = document.getElementById('cart-total');
-        const buttonCartTotal = document.getElementById('button-cart-total');
-        fetch('https://127.0.0.1:8000/cart/api_qte/' + id + '/' + element.value)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            let total = data.total;
+        // add event listener to inputs
+        const AllPlusProd = document.querySelectorAll('#plus_prod');
+        const AllMinusProd = document.querySelectorAll('#minus_prod');
+        const AllInputQteLivres = document.querySelectorAll('input[id="cart-prod-qte"]');
+        const ButtonCommanderProd = document.getElementById('commander-prod');
 
-            cartTotal.textContent = `${total.toFixed(3)} TD`;
-            buttonCartTotal.textContent = `${total.toFixed(3)} TD`;
-
-            if (parseInt(element.value) === 0) {
-                element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
-            }
-        });
-    }
-
-    const inputQteLivres = document.querySelectorAll('input[id="cart-prod-qte"]');
-    const body = document.querySelector('body');
-
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log(inputQteLivres);
-        inputQteLivres.forEach(input => {
-            input.addEventListener('change', function () {
+        AllInputQteLivres.forEach(inputQteLivre => {
+            inputQteLivre.addEventListener('change', function () {
                 update(this,this.getAttribute('idprod'));
-                console.log(this.getAttribute('idprod'));
             });
-        console.log(inputQteLivres);
         });
-    });
-    {# console.log(inputQteLivres);
 
-    inputQteLivres.forEach(input => {
-        input.addEventListener('change', function () {
-            update(this,this.getAttribute('idprod'));
-            console.log(this.getAttribute('idprod'));
+        if (data.data.length > 0) {
+            changeView('normal');
+            ButtonCommanderProd.removeAttribute('disabled');
+            ButtonCommanderProd.setAttribute('enabled', true);
+        }else{
+            // disable button
+            changeView('empty');
+            ButtonCommanderProd.removeAttribute('enabled');
+            ButtonCommanderProd.setAttribute('disabled', true);
+        }
+    }
+
+    refreshData = async() => {
+        changeView('loading');
+        await fetch(urlBase+'/cart/get')
+        .then(response => response.json())
+        .then(data => {
+            UpdateView(data);
         });
-    }); #}
+    }
+
+    commander = () => {
+        window.location.href = '{{path('app_order_add')}}';
+        window.location.href = '{{path('cart_index')}}';
+    }
+
+    changeView = (etat) =>{
+        const cartProductsDiv = document.getElementById('cart-products'); // cart products div
+        const cartEmpty = document.getElementById('cart-empty'); // cart empty div
+        const cartLoading = document.getElementById('cart-loading'); // cart loading div
+
+        if (etat == 'loading') {
+            cartProductsDiv.style.display = 'none';
+            cartEmpty.style.display = 'none';
+            cartLoading.style.display = 'block';
+        }else if (etat == 'empty') {
+            cartProductsDiv.style.display = 'none';
+            cartEmpty.style.display = 'block';
+            cartLoading.style.display = 'none';
+        }else if (etat == 'normal') {
+            cartProductsDiv.style.display = 'block';
+            cartEmpty.style.display = 'none';
+            cartLoading.style.display = 'none';
+        }
+    }
+
+  
 </script>

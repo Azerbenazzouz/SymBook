@@ -1,0 +1,32 @@
+{% for element in data %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-5">
+                        <img alt="white book on black textile" class="img-thumbnail w-100" src="https://via.placeholder.com/640x480.png/0033ff?text=est">
+                    </div>
+                    <div class="col-md-7">
+                        <h4>{{element.livre.titre}}</h4>
+                        <h6 class="text-muted mb-2">{{element.livre.auteur}}</h6>
+                    <h4 class="text-success border rounded-5 px-2 py-1 border-success">{{element.livre.prix}}TND</h4>
+                    <h6 class=" mb-2">{{element.qte}}</h6>
+                    <h6 class=" mb-2">{{element.qte * element.livre.prix }} TND</h6>
+                        <div class="input-group">
+                            <a class="btn btn-primary" href="{{path('cart_add',{id:element.livre.id})}}" >
+                                <i class="fas fa-caret-up"></i>
+                            </a>
+                            <input class="form-control text-center number-without-arrows" type="number" inputmode="numeric" value={{element.qte}} min="0" step="1">
+                            <a class="btn btn-primary" href="{{path('cart_remove',{id:element.livre.id})}}" >
+                                <i class="fas fa-caret-down" style="font-size: 17px;"></i>
+                            </a>
+                            <a class="btn btn-danger" href="{{path('cart_delete',{id:element.livre.id})}}">Supprimer</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <p>votre panier est vide </p>
+{% endfor %}

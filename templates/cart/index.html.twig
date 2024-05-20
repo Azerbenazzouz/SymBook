@@ -1,40 +1,120 @@
 {% extends 'base.html.twig' %}
 {% block body %}
-{% for element in data %}
-<div class="card mb-3">
-    <div class="card-body">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-5">
-                    <img alt="white book on black textile" class="img-thumbnail w-100" src="https://via.placeholder.com/640x480.png/0033ff?text=est">
-                </div>
-                <div class="col-md-7">
-                    <h4>{{element.livre.titre}}</h4>
-                    <h6 class="text-muted mb-2">{{element.livre.auteur}}</h6>
-                   <h4 class="text-success border rounded-5 px-2 py-1 border-success">{{element.livre.prix}}TND</h4>
-                  <h6 class=" mb-2">{{element.qte}}</h6>
-                <h6 class=" mb-2">{{element.qte * element.livre.prix }} TND</h6>
-                    <div class="input-group">
-                        <a class="btn btn-primary" href="{{path('cart_add',{id:element.livre.id})}}" >
-                            <i class="fas fa-caret-up"></i>
-                        </a>
-                        <input class="form-control text-center number-without-arrows" type="number" inputmode="numeric" value={{element.qte}} min="0" step="1">
-                        <a class="btn btn-primary" href="{{path('cart_remove',{id:element.livre.id})}}" >
-                            <i class="fas fa-caret-down" style="font-size: 17px;"></i>
-                        </a>
-                        <a class="btn btn-danger" href="{{path('cart_delete',{id:element.livre.id})}}">Supprimer</a>
+{# {% for element in data %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-5">
+                        <img alt="white book on black textile" class="img-thumbnail w-100" src="https://via.placeholder.com/640x480.png/0033ff?text=est">
+                    </div>
+                    <div class="col-md-7">
+                        <h4>{{element.livre.titre}}</h4>
+                        <h6 class="text-muted mb-2">{{element.livre.auteur}}</h6>
+                    <h4 class="text-success border rounded-5 px-2 py-1 border-success">{{element.livre.prix}}TND</h4>
+                    <h6 class=" mb-2">{{element.qte}}</h6>
+                    <h6 class=" mb-2">{{element.qte * element.livre.prix }} TND</h6>
+                        <div class="input-group">
+                            <a class="btn btn-primary" href="{{path('cart_add',{id:element.livre.id})}}" >
+                                <i class="fas fa-caret-up"></i>
+                            </a>
+                            <input class="form-control text-center number-without-arrows" type="number" inputmode="numeric" value={{element.qte}} min="0" step="1">
+                            <a class="btn btn-primary" href="{{path('cart_remove',{id:element.livre.id})}}" >
+                                <i class="fas fa-caret-down" style="font-size: 17px;"></i>
+                            </a>
+                            <a class="btn btn-danger" href="{{path('cart_delete',{id:element.livre.id})}}">Supprimer</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% else %}
+    <p>votre panier est vide </p>
+{% endfor %} #}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="text-center">Votre panier</h1>
+            <div class="px-0 px-sm-5 py-5 mb-3">
+                {% include 'cart/_prod.html.twig' with {'data':data} %}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h1 class="text-center">Récapitulatif</h1>
+            <div class="px-0 px-sm-5 pt-5 mb-2">
+                <h5 class="text-center mb-3">Récapitulatif de la commande</h5>
+                <div class="d-flex justify-content-between">
+                    <h6>Produits</h6>
+                    <h6>{{total}} TND</h6>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <h6>Livraison</h6>
+                    <h6>Gratuit</h6>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <h6>Total</h6>
+                    <h6>{{total}} TND</h6>
+                </div>
+            </div>
+            {# user info #}
+            <div class="px-0 px-sm-5 pt-2">
+                <h5 class="text-center mb-3">Informations de livraison</h5>
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-2">Nom et prénom : </h6>
+                    <h6>{{ user.nom }}</h6>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-2">Adresse : </h6>
+                    <h6>{{ user.adresse }}</h6>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-2">Téléphone : </h6>
+                    <h6>{{ user.telephone }}</h6>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <h6 class="mb-2">Email : </h6>
+                    <h6>{{ user.email }}</h6>
+                </div>
+                <div class="d-flex justify-content-end mt-2">
+                    <a class="btn btn-primary" href="{{path('app_user_update')}}">Modifier vos informations</a>
+                </div>
+            </div>
+            <div class="px-0 px-sm-5 py-4 mb-3">
+                <h5 class="text-center mb-3">Choisir le mode de paiement</h5>
+                <div class="form-check ">
+                    <label class="d-flex align-items-center form-check-label" for="flouci">
+                        <input class="form-check input" type="radio" name="payment" id="flouci" value="flouci" checked>
+                        Payment en ligne
+                    </label>
+                </div>
+                <div class="form-check ">
+                    <label class="d-flex align-items-center form-check-label" for="cod">
+                        <input class="form-check input" type="radio" name="payment" id="cod" value="cod">
+                        Paiement à la livraison
+                    </label>
+                </div>
+                <h5 class="text-end mt-3">Total : {{total}} TND</h5>
+                <div class="mt-3">
+                    <a class="btn btn-primary w-100" href="{{path('app_home')}}">Continuer vos achats</a>
+                    <button class="btn btn-success w-100 mt-3" id="acheter">Passer votre commande</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-{% else %}
-<p>votre panier est vide </p>
-{% endfor %}
-<h5 class="text-end mx-3"> Total : {{total}} TND</h5>
-<a  href="{{path('cart_empty')}}" class="btn btn-danger"> Vider</a>
-<div class="d-flex justify-content-center mb-3"><a class="btn btn-success" href="{{path('app_order_add')}}">Passer votre commande</a></div>
 
+<script>
+    const acheter = document.getElementById('acheter');
+    const paymentType = document.getElementsByName('payment');
+    acheter.addEventListener('click', (e) => {
+        e.preventDefault();
+        paymentType.forEach((element) => {
+            if (element.checked) {
+                window.location.href = `{{path('app_order_add')}}?payment=${element.value}`;
+            }
+        });
+    });
+</script>
 {% endblock %}
 

@@ -12,8 +12,6 @@
 	    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.2/dist/sketchy/bootstrap.min.css">
     	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neucha|Cabin+Sketch&amp;display=swap">
     	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
-    	<link rel="stylesheet" href="assets/css/Login-Form-Basic-icons.css">
-
 	</head>
 	<body>
 		{# NavBar #}
@@ -34,7 +32,7 @@
 				<div class="d-flex gap-3 align-items-center">
 					{% if app.user %}
 						{# Mes Commandes #}
-						<a href="{{ path('app_user') }}">
+						<a href="{{ path('app_order_index') }}">
 							<i class="fas fa-truck fs-3 text-light"></i>
 						</a>
 						{# Panier #}
@@ -46,7 +44,7 @@
 						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_logout') }}">Deconnecter</a>
 					{% else %}
 						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_register') }}">Inscrire</a>
-						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_login') }}">Connecter</a>
+						<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_login') }}">Se Connecter</a>
 					{% endif %}
 				</div>
 			</div>
@@ -56,7 +54,7 @@
 					<button class="btn rounded-5 px-3 bg-success btn-outline-light" type="button" data-bs-toggle="offcanvas" data-bs-target="#cart-canvas" aria-controls="cart-canvas">
 						<span class="badge bg-primary rounded me-2" id="button-cart-Qte">0</span>
 						<i class="fas fa-shopping-cart me-2"></i> 
-						<span id="button-cart-total"></span>
+						<span id="button-cart-total">0.000 TD</span>
 					</button>
 				</div>
 			</nav>

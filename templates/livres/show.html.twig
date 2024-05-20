@@ -26,7 +26,9 @@
                         </p> 
                         <div class="d-flex justify-content-between gap-3">
                         {% if livre.qte > 0 %}
-                    <a class="btn btn-info w-100 mb-3" href="{{path('cart_add',{id:livre.id})}}" type="button">Ajouter Panier</a> 
+                    <a class="btn btn-info w-100 mb-3" 
+                        {# href="{{path('cart_add',{id:livre.id})}}" #}
+                        onclick="addAndRefreshOnlyDataAndInputs(this,{{livre.id}})" type="button">Ajouter Panier</a> 
                         {% else %}
                             <p class="text-danger">Temporairement en rupture de stock</p>
                     {% endif %}

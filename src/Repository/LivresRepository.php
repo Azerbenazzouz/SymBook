@@ -22,10 +22,10 @@ class LivresRepository extends ServiceEntityRepository
 {
 
     /**
-     * @var PaginatorInterface $paginateur
+     * @var PaginatorInterface
      */
-
     private $paginator;
+
     public function __construct(ManagerRegistry $registry,private PaginatorInterface $paginateur)
     {
         parent::__construct($registry, Livres::class);
@@ -75,7 +75,9 @@ class LivresRepository extends ServiceEntityRepository
     //     return $livers;
     // }
 
-
+/**
+ * @return PaginationInterface<int,Livres>
+ */
 public function findBySearch(SearchData $searchData): PaginationInterface
 {
     $data=$this->createQueryBuilder('p');
@@ -92,7 +94,10 @@ public function findBySearch(SearchData $searchData): PaginationInterface
     return $livers;
 }
 
-    public function findByFilter(FilterData $filterData): PaginationInterface
+/**
+ * @return PaginationInterface<int,Livres>
+ */
+public function findByFilter(FilterData $filterData): PaginationInterface
     {
         $data = $this->createQueryBuilder('p');
         if (!empty($filterData->titre)) {

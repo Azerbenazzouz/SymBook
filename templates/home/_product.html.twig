@@ -13,7 +13,10 @@
         </p>
         <div class="d-flex justify-content-between gap-3">
         {% if livre.qte > 0 %}
-    <a class="btn btn-success w-50" href="{{path('cart_add',{id:livre.id})}}" >Ajouter Panier</a>
+    <a class="btn btn-success w-50" 
+        {# href="{{path('cart_add',{id:livre.id})}}"  #}
+        onclick="addAndRefreshOnlyDataAndInputs(this,{{livre.id}})"
+        >Ajouter Panier</a>
             {% else %}
         <p class="text-danger">Temporairement en rupture de stock</p>
           {% endif %}

@@ -8,13 +8,23 @@
     {# List des livres #}
     <section>
         <section>
+        {% for message in app.flashes('message') %}
+            <div class="alert alert-success" role="alert" id="alert" name="alert_success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('message_error') %}
+            <div class="alert alert-danger" role="alert" id="alert" name="alert_error">
+                {{ message }}
+            </div>
+        {% endfor %}
             <div class="d-flex justify-content-between container py-3 gap-3">
                 <div>
                     <button class="btn btn-info" type="button" data-bs-toggle="offcanvas" data-bs-target="#filter-canvas" aria-controls="filter-canvas">
                         <i class="fas fa-filter me-2"></i>Filtrer
                     </button>
                 </div>
-                {{form_start(form)}}
+                {{form_start(form) }}
                     <div class="d-flex gap-1">
                         {{form_widget(form.q , {'attr':{'class':'form-control'}})}}
                         <button class="btn btn-primary" type="submit">Chercher</button>
@@ -60,4 +70,22 @@
             </div>
         </div>
     </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var alert = document.getElementById('alert');
+            if(alert.getAttribute('name') == 'alert_success'){
+                var audio = new Audio('{{asset('audio/alert.m4a')}}');
+                audio.play();
+            }
+        if (alert) {
+            setTimeout(function() {
+                alert.style.display = 'none';
+            }, 3000);
+        }
+    });
+
+
+</script>
+
+
 {% endblock %}

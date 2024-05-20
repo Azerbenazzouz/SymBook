@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Entity\Livres;
 use App\Repository\LivresRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CartController extends AbstractController
 {
     #[Route('/add/{id}', name: 'add')]
-    public function add(Livres $livre , SessionInterface $session )
+    public function add(Livres $livre , SessionInterface $session ) : Response
     {
        $id=$livre->getId();
        $panier=$session->get('panier',[]);
@@ -25,12 +26,10 @@ class CartController extends AbstractController
 
        return $this->redirectToRoute('cart_index');
 
-
-      
     }
 
     #[Route('/', name: 'index')]
-    public function index(SessionInterface $session,LivresRepository $rep  ): Response
+    public function index(SessionInterface $session,LivresRepository $rep,UserRepository $userRepository): Response
     {
         $panier=$session->get('panier',[]);
         $data=[];
@@ -41,15 +40,12 @@ class CartController extends AbstractController
             $data[]=[
                 'livre'=>$livre,
                 'qte'=>$qte,
-            
             ];
             $total+= $livre->getPrix() * $qte;
           
         }
-       
-        return $this->render('cart/index.html.twig',compact('data','total'));
-     
-         
+        $user = $userRepository->find($this->getUser());
+        return $this->render('cart/index.html.twig',compact('data','total','user'));       
     }
 
     #[Route('/remove/{id}', name: 'remove')]
@@ -126,39 +122,26 @@ class CartController extends AbstractController
     }
 
     #[Route('/api_add/{id}', name: 'api_add')]
-    public function apiAdd(Livres $livre, SessionInterface $session): Response {
+    public function apiAdd(Livres $livre, SessionInterface $session) : Response {
         $id = $livre->getId();
         $panier = $session->get('panier', []);
-        $total = 0;
-        foreach ($panier as $id => $qte) {
-            $total += $livre->getPrix() * $qte;
-        }
+
         if (empty($panier[$id])) {
             $panier[$id] = 1;
         } else {
             $panier[$id]++;
         }
-        
+
         $session->set('panier', $panier);
-        return new JsonResponse([
-            'id' => $livre->getId(),
-            'image' => $livre->getImage(),
-            'titreLivre' => $livre->getTitre(),
-            'editeur' => $livre->getEditeur(),
-            'prix' => $livre->getPrix(),
-            'qte' => $panier[$id],
-            'total' => $total + $livre->getPrix(),
-         ]);
+        return new JsonResponse(['id' => $id]);
+
     }
 
     #[Route('/api_remove/{id}', name: 'api_remove')]
-    public function apiRemove(Livres $livre, SessionInterface $session): Response {
+    public function apiRemove(Livres $livre, SessionInterface $session) : Response{
         $id = $livre->getId();
         $panier = $session->get('panier', []);
-        $total = 0;
-        foreach ($panier as $id => $qte) {
-            $total += $livre->getPrix() * $qte;
-        }
+
         if (!empty($panier[$id])) {
             if ($panier[$id] > 1) {
                 $panier[$id]--;
@@ -166,26 +149,16 @@ class CartController extends AbstractController
                 unset($panier[$id]);
             }
         }
+
         $session->set('panier', $panier);
-        return new JsonResponse([
-            'id' => $livre->getId(),
-            'image' => $livre->getImage(),
-            'titreLivre' => $livre->getTitre(),
-            'editeur' => $livre->getEditeur(),
-            'prix' => $livre->getPrix(),
-            'qte' => $panier[$id] ?? 0,
-            'total' => $total - $livre->getPrix(),
-        ]);
+        return new JsonResponse(['id' => $id]);
     }
 
     #[Route('/api_qte/{id}/{qte}', name: 'api_qte')]
-    public function apiQte(Livres $livre, SessionInterface $session, int $qte): Response {
+    public function apiQte(Livres $livre, SessionInterface $session, int $qte) : Response {
         $id = $livre->getId();
         $panier = $session->get('panier', []);
-        $total = 0;
-        foreach ($panier as $id => $qte) {
-            $total += $livre->getPrix() * $qte;
-        }
+        
         if (!empty($panier[$id])) {
             if ($qte != 0) {
                 $panier[$id]=$qte;
@@ -193,16 +166,9 @@ class CartController extends AbstractController
                 unset($panier[$id]);
             }
         }
+        
         $session->set('panier', $panier);
-        return new JsonResponse([
-            'id' => $livre->getId(),
-            'image' => $livre->getImage(),
-            'titreLivre' => $livre->getTitre(),
-            'editeur' => $livre->getEditeur(),
-            'prix' => $livre->getPrix(),
-            'qte' => $panier[$id] ?? 0,
-            'total' => $total - $livre->getPrix(),
-        ]);
+        return new JsonResponse(['id' => $id, 'qte' => $qte]);
     }
 
 
@@ -232,6 +198,12 @@ class CartController extends AbstractController
             $total += $livre->getPrix() * $qte;
         }
         return new JsonResponse(['total' => $total]);
+    }
+
+    #[Route('/api_add_Livre/{id}', name: 'api_add_Livre')]
+    public function apiAddLivre(Livres $livre, SessionInterface $session,LivresRepository $rep): Response {
+        $this->add($livre,$session);
+        return $this->get($session, $rep);
     }
 
 

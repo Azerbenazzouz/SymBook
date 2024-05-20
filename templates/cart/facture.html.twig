@@ -1,0 +1,21 @@
+<div>
+    <h1 style="text-align: center;">Facture</h1>
+    <p>Commande N°: {{ order.id }}</p>
+    <p>Date: {{ order.createAt|date('d/m/Y H:i') }}</p>
+    <p>Client: {{ app.user.email }}</p>
+    <p>Adresse de livraison: {{ app.user.adresse }}</p>
+    <p>Adresse de facturation: {{ app.user.adresse }}</p>
+    <p>Mode de paiement: {{ order.payementtype.type }}</p>
+    <p>Etat de paiement: {{ order.etatPayement == 1 ? 'Payée' : 'Non payée' }}</p>
+    <p>Etat de la commande: {{ order.Etat.etat }}</p>
+    <p>Total: {{ order.getTotal() }} TND</p>
+    <p>Produits:</p>
+    <ul>
+        {% for detail in order.orderDetails %}
+            <li>{{ detail.livre.titre }} - {{ detail.quantity }} x {{ detail.price }} TND</li>
+        {% endfor %}
+    </ul>
+
+    <p style="text-align: center;">Merci pour votre achat! A bientôt!</p>
+    <p style="text-align: center;">SympaBook</p>
+</div>
