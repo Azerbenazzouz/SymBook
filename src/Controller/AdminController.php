@@ -14,12 +14,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
-  
-   
-    #[Route('/stats', name: 'stats')]
+
+    #[Route('/dashboard', name: 'app_dashboard')]
     public function index(OrderRepository $orderRepository,UserRepository $userRepository,OrderDetailsRepository $orderDetailsRepository,LivresRepository $livresRepository): Response
     {
         $today = new DateTime();
@@ -70,19 +71,19 @@ class AdminController extends AbstractController
 
        // Query to find the Livre with the maximum quantity ordered
        $mostOrderedBookId = $orderDetailsRepository->createQueryBuilder('od')
-       ->select('IDENTITY(od.livre) AS bookId, MAX(od.quantity) AS maxQuantity')
-       ->groupBy('od.livre')
-       ->orderBy('maxQuantity', 'DESC')
-       ->setMaxResults(1)
-       ->getQuery()
-       ->getOneOrNullResult();
+        ->select('IDENTITY(od.livre) AS bookId, MAX(od.quantity) AS maxQuantity')
+        ->groupBy('od.livre')
+        ->orderBy('maxQuantity', 'DESC')
+        ->setMaxResults(1)
+        ->getQuery()
+        ->getOneOrNullResult();
+        
+        // If there is a result, find the Livre entity by its ID
+        $mostOrderedBook = null;
+        if ($mostOrderedBookId !== null) {
+            $mostOrderedBook = $livresRepository->find($mostOrderedBookId['bookId']);
 
-   // If there is a result, find the Livre entity by its ID
-   $mostOrderedBook = null;
-   if ($mostOrderedBookId !== null) {
-       $mostOrderedBook = $livresRepository->find($mostOrderedBookId['bookId']);
-
-   }
+        }
 
 
 
@@ -92,11 +93,8 @@ class AdminController extends AbstractController
             'dayOfWeek' => $dayOfWeek,
             'totalUsers' => $totalUsers, 
             'totalOrders' => $totalOrders,
-            'mostOrderedBook' => $mostOrderedBook,
-         
-           
+            'mostOrderedBook' => $mostOrderedBook, 
         ]);
     }
-
-    }
+}
 
