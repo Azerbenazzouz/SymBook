@@ -24,6 +24,7 @@
 						{% if is_granted('ROLE_ADMIN') %}
 							<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('admin_livres') }}">Liste des Livres</a>
 							<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('admin_categorie') }}">Liste des Categories</a>
+							<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_order_gestion') }}">Liste des Commandes</a>
 							<a class="btn btn btn-outline-light rounded-2 py-1 px-3 fs-6 text-capitalize" type="button" href="{{ path('app_admin_gestion_user_index') }}">Liste des Utilisateur</a>
 						{% endif %}
 

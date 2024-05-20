@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\EtatOrder;
 use App\Entity\Order;
 use App\Entity\OrderDetails;
 use App\Repository\EtatOrderRepository;
@@ -204,15 +203,71 @@ class OrderController extends AbstractController
 
     // gestion des commandes
     #[Route('/gestion', name: 'gestion')]
-    public function gestion(OrderRepository $orderRepository): Response
+    public function gestion(OrderRepository $orderRepository,EtatOrderRepository $etatOrderRepository): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $orders = $orderRepository->findAll();
-
+        $etatOrders = $etatOrderRepository->findAll();
         return $this->render('order/gestion.html.twig', [
             'orders' => $orders,
+            'etatOrders' => $etatOrders
         ]);
     }
 
+    // changer l'état de la commande
+    #[Route('/update/etat/{id}/{etat}', name: 'update_etat')]
+    public function updateEtat(OrderRepository $orderRepository,EtatOrderRepository $etatOrderRepository, $id,$etat,EntityManagerInterface $em,MailerInterface $mailer): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $order = $orderRepository->find($id);
+        $etatOrder = $etatOrderRepository->findOneBy(['id'=>$etat]);
+        if($order == null || $etatOrder == null){
+            $this->addFlash('message_error','Commande introuvable');
+            return $this->redirectToRoute('app_order_gestion');
+        }
+        $order->setEtat($etatOrder);
+        if($etatOrder->getEtat() == 'livré'){
+            $order->setEtatPayement(true);
+        }
+        $em->flush();
+        $this->addFlash('message','Etat de la commande modifié avec succès');
+
+        $email = (new Email())
+            ->from('symbook@gmail.com')
+            ->to($order->getUser()->getUserIdentifier())
+            ->subject('Etat de votre commande '.$order->getReference())
+            ->html('<h3>Etat de votre commande <span style="color:blue;">'.$order->getReference().'</span> a été modifié à <span style="color:green;">'.$etatOrder->getEtat().'</span></h3>');
+        $mailer->send($email);
+        $this->addFlash('message','Etat de la commande modifié avec succès');
+        return $this->redirectToRoute('app_order_gestion');
+    }
+
+    // changer l'état de payement de la commande
+    #[Route('/update/payement/{id}/{etat}', name: 'update_payement')]
+    public function updatePayement(OrderRepository $orderRepository, $id,$etat,EntityManagerInterface $em,MailerInterface $mailer): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $order = $orderRepository->find($id);
+        if($order == null){
+            $this->addFlash('message_error','Commande introuvable');
+            return $this->redirectToRoute('app_order_gestion');
+        }
+
+        $order->setEtatPayement($etat);
+        $em->flush();
+        $this->addFlash('message','Etat de payement de la commande modifié avec succès');
+        // send email to user 'etat de payement de la commande modifié'
+        $etat = $etat ? 'payé' : 'non payé';
+        $email = (new Email())
+            ->from('symbook@gmail.com')
+            ->to($order->getUser()->getUserIdentifier())
+            ->subject('Etat de payement de votre commande '.$order->getReference())
+            ->html('<h3>Etat de payement de votre commande <span style="color:blue;">'.$order->getReference().'</span> a été modifié à <span style="color:green;">'.$etat.'</span></h3>');
+        $mailer->send($email);
+        $this->addFlash('message','Etat de payement de la commande modifié avec succès');
+        return $this->redirectToRoute('app_order_gestion');
+    }
 }
