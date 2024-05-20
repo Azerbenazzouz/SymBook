@@ -15,13 +15,22 @@ use Symfony\Component\Routing\Attribute\Route;
 class CategorieController extends AbstractController
 {
     #[Route('/', name: 'admin_categorie')]
-    public function index(CategoriesRepository $rep): Response
+    public function index(CategoriesRepository $rep, Request $request): Response
     {
-        $categories = $rep->findAll();
+        $searchTerm = $request->query->get('search', '');
+        if ($searchTerm) {
+            $categories = $rep->findByLibelle($searchTerm);
+        } else {
+            $categories = $rep->findAll();
+        }
+
         return $this->render('categorie/index.html.twig', [
             'categories' => $categories,
+            'searchTerm' => $searchTerm
         ]);
     }
+
+
     #[Route('/admin/categorie/create', name: 'admin_categorie_create')]
     public function create(EntityManagerInterface $em, Request $request): Response
     {

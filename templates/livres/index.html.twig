@@ -5,7 +5,11 @@
 {% block body %}
 	<h1>Liste des livres</h1>
 	<div class="d-flex justify-content-end mb-3">
-		<a href="{{url('admin_livres_add')}}" class="btn btn-primary">Ajouter un Livre</a>
+		<form method="get" action="{{ path('admin_livres') }}" class="d-flex">
+			<input type="text" name="title" class="form-control me-2" placeholder="Rechercher par titre">
+			<button type="submit" class="btn btn-primary">Rechercher</button>
+		</form>
+		<a href="{{url('admin_livres_add')}}" class="btn btn-primary ms-3">Ajouter un Livre</a>
 	</div>
 	<table class="table">
 		<tr>

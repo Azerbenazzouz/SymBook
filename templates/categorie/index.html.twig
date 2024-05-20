@@ -7,7 +7,11 @@
 
 	<h1>Liste des Catégories</h1>
 	<div class="d-flex justify-content-end mb-3">
-		<a href="{{url('admin_categorie_create')}}" class="btn btn-primary">Ajouter une catégorie</a>
+		<form class="d-flex" method="get" action="{{ path('admin_categorie') }}">
+			<input type="text" name="search" class="form-control me-2" placeholder="Search by libelle" value="{{ searchTerm }}">
+			<button type="submit"  class="btn btn-primary">Rechercher</button>
+		</form>
+		<a href="{{url('admin_categorie_create')}}" class="btn btn-primary ms-3">Ajouter une catégorie</a>
 	</div>
 
 	<table class="table">
@@ -24,19 +28,13 @@
 				<td>{{categorie.slug}}</td>
 				<td>{{categorie.description}}</td>
 				{# <td>
-					<a href="{{url('admin_livres_show',{'id':categorie.id})}}" class="btn btn-success btn-sm">Voir détail...</a>
-				</td> #}
+									<a href="{{url('admin_livres_show',{'id':categorie.id})}}" class="btn btn-success btn-sm">Voir détail...</a>
+								</td> #}
 				<td>
-					<a 
-						href="{{url('admin_categorie_delete',{'id':categorie.id})}}"
-						class="btn btn-danger btn-sm"
-					>Supprimer</a>
+					<a href="{{url('admin_categorie_delete',{'id':categorie.id})}}" class="btn btn-danger btn-sm">Supprimer</a>
 				</td>
 				<td>
-					<a
-						href="{{url('admin_categorie_update',{'id':categorie.id})}}"
-					 	class="btn btn-primary btn-sm"
-					>Editer</a>
+					<a href="{{url('admin_categorie_update',{'id':categorie.id})}}" class="btn btn-primary btn-sm">Editer</a>
 				</td>
 			</tr>
 		{% endfor %}

@@ -45,4 +45,13 @@ class CategoriesRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+public function findByLibelle(string $libelle): array
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.libelle LIKE :libelle')
+            ->setParameter('libelle', '%' . $libelle . '%')
+            ->getQuery()
+            ->getResult();
+    }
 }
