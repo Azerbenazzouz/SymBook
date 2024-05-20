@@ -18,8 +18,14 @@
 					<hr class="dark horizontal my-0">
 					<div class="card-footer p-3">
 						<p class="mb-0">
-							<span class="text-success text-sm font-weight-bolder">{{ percentageChange|number_format(2, '.', ',') }}%
-							</span>than last week
+							{% if percentageChange < 0 %}
+								<span class="text-danger text-sm font-weight-bolder">
+								{% else %}
+									<span class="text-success text-sm font-weight-bolder">
+									{% endif %}
+									{{ percentageChange|number_format(2, '.', ',') }}%
+								</span>
+								than last week</p>
 						</p>
 					</div>
 				</div>
@@ -30,7 +36,7 @@
 				<div class="card">
 					<div class="card-header p-3 pt-2">
 						<div class="icon icon-lg icon-shape bg-gradient-primary shadow-primary text-center border-radius-xl mt-n4 position-absolute">
-							<i class="material-icons opacity-10">person</i>
+							<i class="material-icons opacity-10">{{ dayOfWeek }}</i>
 						</div>
 						<div class="text-end pt-1">
 							<p class="text-sm mb-0 text-capitalize">Total Users</p>
@@ -39,34 +45,27 @@
 					</div>
 					<hr class="dark horizontal my-0">
 					<div class="card-footer p-3">
-						<p class="mb-0"></p>
+						<p class="mb-0">user</p>
 					</div>
 				</div>
 			</div>
-
 
 			<div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
 				<div class="card">
 					<div class="card-header p-3 pt-2">
 						<div class="icon icon-lg icon-shape bg-gradient-success shadow-success text-center border-radius-xl mt-n4 position-absolute">
-							<i class="material-icons opacity-10">Order</i>
+							<i class="material-icons opacity-10">{{ dayOfWeek }}</i>
 						</div>
 						<div class="text-end pt-1">
 							<p class="text-sm mb-0 text-capitalize">Total Orders</p>
-							<h4 class="mb-0">{{ totalTodayOrders }}</h4>
+							<h4 class="mb-0">{{ totalOrders }}</h4>
 						</div>
 					</div>
 					<hr class="dark horizontal my-0">
 					<div class="card-footer p-3">
 						<p class="mb-0">
-							{% if progressPercentage > 0 %}
-								<span class="text-success text-sm font-weight-bolder">+{{ progressPercentage }}%</span>
-							{% elseif progressPercentage < 0 %}
-								<span class="text-danger text-sm font-weight-bolder">{{ progressPercentage }}%</span>
-							{% else %}
-								<span class="text-info text-sm font-weight-bolder">No change</span>
-							{% endif %}
-							than yesterday
+							<span class="text-success text-sm font-weight-bolder"></span>
+							Progress
 						</p>
 					</div>
 				</div>
@@ -76,29 +75,32 @@
 				<div class="card">
 					<div class="card-header p-3 pt-2">
 						<div class="icon icon-lg icon-shape bg-gradient-info shadow-info text-center border-radius-xl mt-n4 position-absolute">
-							<i class="material-icons opacity-10">weekend</i>
+							<i class="material-icons opacity-10">{{ dayOfWeek }}</i>
 						</div>
-						<div class="text-end pt-1">
-							<p class="text-sm mb-0 text-capitalize">Sales</p>
-							{% if mostOrderedBook is not null %}
+						{% if mostOrderedBook %}
+							<div class="text-end pt-1">
+								<p class="text-sm mb-0 text-capitalize">Most Wanted</p>
 								<h4 class="mb-0">{{ mostOrderedBook.getTitre() }}</h4>
-							{% else %}
-								<h4 class="mb-0">No book ordered yet</h4>
-							{% endif %}
-						</div>
+							</div>
+						{% else %}
+							<div class="text-end pt-1">
+								<p class="text-sm mb-0 text-capitalize">Most</p>
+								<h4 class="mb-0">Not found</h4>
+							</div>
+						{% endif %}
 					</div>
 					<hr class="dark horizontal my-0">
 					<div class="card-footer p-3">
 						<p class="mb-0">
-							{% if mostOrderedBook is not null %}
-								<span class="text-success text-sm font-weight-bolder">Most ordered book</span>
-							{% else %}
-								<span class="text-info text-sm font-weight-bolder">No orders</span>
-							{% endif %}
+							<span class="text-success text-sm font-weight-bolder">
+								</span>
 						</p>
 					</div>
+
 				</div>
 			</div>
+
+
 		</div>
 	</div>
 
