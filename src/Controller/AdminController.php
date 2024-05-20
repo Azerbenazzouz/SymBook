@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Livres;
+use App\Entity\OrderDetails;
 use App\Repository\LivresRepository;
+use App\Repository\OrderDetailsRepository;
 use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
 use DateInterval;
@@ -18,11 +20,10 @@ class AdminController extends AbstractController
   
    
     #[Route('/stats', name: 'stats')]
-    public function index(OrderRepository $orderRepository,UserRepository $userRepository,LivresRepository $livresRepository): Response
+    public function index(OrderRepository $orderRepository,UserRepository $userRepository,OrderDetailsRepository $orderDetailsRepository,LivresRepository $livresRepository): Response
     {
         $today = new DateTime();
-        $yesterday = (clone $today)->sub(new DateInterval('P1D'));
-
+      
         // Define the start and end of the current day
         $todayStart = (clone $today)->setTime(0, 0);
         $todayEnd = (clone $today)->setTime(23, 59, 59);
@@ -64,29 +65,25 @@ class AdminController extends AbstractController
 
         $totalUsers = $userRepository->count([]);
 
-        // Récupérer les commandes d'aujourd'hui
-    $todayOrders = $orderRepository->findBy([
-        'create_at' => new \DateTimeImmutable('today'),
-    ]);
+        $orders = $orderRepository->findAll();
+        $totalOrders = count($orders);
 
-    // Récupérer les commandes d'hier
-    $yesterdayOrders = $orderRepository->findBy([
-        'create_at' => new \DateTimeImmutable('yesterday'),
-    ]);
+       // Query to find the Livre with the maximum quantity ordered
+       $mostOrderedBookId = $orderDetailsRepository->createQueryBuilder('od')
+       ->select('IDENTITY(od.livre) AS bookId, MAX(od.quantity) AS maxQuantity')
+       ->groupBy('od.livre')
+       ->orderBy('maxQuantity', 'DESC')
+       ->setMaxResults(1)
+       ->getQuery()
+       ->getOneOrNullResult();
 
-    // Calculer le nombre total de commandes pour aujourd'hui et hier
-    $totalTodayOrders = count($todayOrders);
-    $totalYesterdayOrders = count($yesterdayOrders);
+   // If there is a result, find the Livre entity by its ID
+   $mostOrderedBook = null;
+   if ($mostOrderedBookId !== null) {
+       $mostOrderedBook = $livresRepository->find($mostOrderedBookId['bookId']);
 
-    // Calculer le pourcentage de progression
-    if ($totalYesterdayOrders !== 0) {
-        $progressPercentage = (($totalTodayOrders - $totalYesterdayOrders) / $totalYesterdayOrders) * 100;
-    } else {
-        // Si le nombre de commandes hier est 0, définissez le pourcentage de progression à 100% (toutes les commandes d'aujourd'hui sont nouvelles)
-        $progressPercentage = 100;
-    }
+   }
 
-    $mostOrderedBook = $livresRepository->findMostOrderedBook();
 
 
         return $this->render('admin/index.html.twig', [
@@ -94,9 +91,10 @@ class AdminController extends AbstractController
             'percentageChange' => $percentageChange,
             'dayOfWeek' => $dayOfWeek,
             'totalUsers' => $totalUsers, 
-            'totalTodayOrders' => $totalTodayOrders,
-        'progressPercentage' => $progressPercentage,
-        'mostOrderedBook' => $mostOrderedBook,
+            'totalOrders' => $totalOrders,
+            'mostOrderedBook' => $mostOrderedBook,
+         
+           
         ]);
     }
 

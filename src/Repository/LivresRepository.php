@@ -135,16 +135,5 @@ public function findByFilter(FilterData $filterData): PaginationInterface
 
     }
 
-    public function findMostOrderedBook(): ?Livres
-    {
-       
-        return $this->createQueryBuilder('l')
-        ->leftJoin('l.orderDetails', 'od')
-        ->groupBy('l.id')
-        ->orderBy('COUNT(od.livre)', 'DESC') // Utilisez od.livre pour faire référence à l'entité Livres associée à OrderDetails
-        ->setMaxResults(1)
-        ->getQuery()
-        ->getOneOrNullResult();
-        }
-
+   
 }
