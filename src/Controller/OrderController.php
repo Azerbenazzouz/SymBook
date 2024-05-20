@@ -270,4 +270,20 @@ class OrderController extends AbstractController
         $this->addFlash('message','Etat de payement de la commande modifié avec succès');
         return $this->redirectToRoute('app_order_gestion');
     }
+
+    // consulter les détails de la commande (order_consulter 'id')
+    #[Route('/consulter/{id}', name: 'consulter')]
+    public function consulter(OrderRepository $orderRepository, $id): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $order = $orderRepository->find($id);
+        if($order == null){
+            $this->addFlash('message_error','Commande introuvable');
+            return $this->redirectToRoute('app_order_gestion');
+        }
+        return $this->render('order/consulter.html.twig', [
+            'order' => $order
+        ]);
+    }
 }

@@ -26,6 +26,7 @@
                 <th>Paiement</th>
                 <th>Payement etat</th>
                 <th>Envoyer Facture</th>
+                <th>Afficher Facture</th>
             </tr>
         </thead>
         <tbody>
@@ -58,8 +59,15 @@
                             Facture
                         </button>
                     </td>
+                    <td>
+                        <a  class="btn btn-warning"
+                            href="{{ path('app_order_consulter', {'id': order.id}) }}"
+                        >
+                            Consulter
+                        </a>
+                    </td>
                 </tr>
-            <input type="hidden" id="id" orderId="{{ order.id }}">
+                <input type="hidden" id="id" orderId="{{ order.id }}">
             {% endfor %}
         </tbody>
     </table>
