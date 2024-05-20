@@ -14,12 +14,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
-  
-   
-    #[Route('/stats', name: 'stats')]
+
+    #[Route('/dashboard', name: 'app_dashboard')]
     public function index(OrderRepository $orderRepository,UserRepository $userRepository,OrderDetailsRepository $orderDetailsRepository,LivresRepository $livresRepository): Response
     {
         $today = new DateTime();
@@ -101,6 +102,5 @@ class AdminController extends AbstractController
            
         ]);
     }
-
-    }
+}
 
