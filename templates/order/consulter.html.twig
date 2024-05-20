@@ -1,0 +1,52 @@
+{# consulter la liste des livre et le total #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container" id='facture'>
+    <h1>Commande n°{{ order.id }}</h1>
+    <p>Passée le {{ order.createAt|date('d/m/Y H:i') }} par {{ order.user.nom }}</p>
+    <h2>Adresse de livraison</h2>
+    <p>{{ order.user.adresse }}</p>
+    <h2>Articles</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Quantité</th>
+                <th>Prix unitaire</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.orderDetails %}
+                <tr>
+                    <td>{{ item.livre.titre }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.livre.prix }} DT</td>
+                    <td>{{ item.livre.prix * item.quantity }} DT</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>Total de la commande : {{ order.total }} DT</p>
+    <p>Etat de la commande : {{ order.etat.etat }}</p>
+    <p>Mode de paiement : {{ order.payementtype.type }}</p>
+    <p>Etat du paiement : {% if order.etatPayement == 1 %}Payée{% else %}Non payée{% endif %}</p>
+</div>
+<div class="d-flex justify-content-end gap-2">
+    <a href="{{ path('app_order_gestion') }}" class="btn btn-primary">Retour</a>
+    <button class="btn btn-info" onClick="imprimer()">Imprimer</button>
+</div>
+    <script>
+        function demandeFacture(id, email) {
+            if (confirm('Voulez-vous envoyer la facture à ' + email + ' ?')) {
+                window.location.href = `${window.location.origin}/commande/demande/facture/${id}/${email}`;
+            }
+        }
+
+        // imprimer la facture
+        imprimer = () => {
+            window.print();
+        }
+    </script>
+{% endblock %}

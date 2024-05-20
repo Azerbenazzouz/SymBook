@@ -1,0 +1,111 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des commandes{% endblock %}
+
+{% block body %}
+        {% for message in app.flashes('message') %}
+            <div class="alert alert-success" role="alert" id="alert" name="alert_success">
+                {{ message }}
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('message_error') %}
+            <div class="alert alert-danger" role="alert" id="alert" name="alert_error">
+                {{ message }}
+            </div>
+        {% endfor %}
+    <h1>Gestion des commandes</h1>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Numéro</th>
+                <th>Date</th>
+                <th>Utilisateur</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th>Paiement</th>
+                <th>Payement etat</th>
+                <th>Envoyer Facture</th>
+                <th>Afficher Facture</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.createAt|date('d/m/Y H:i') }}</td>
+                    <td>{{ order.user.nom }}</td>
+                    <td>{{ order.total }} DT</td>
+                    <td>
+                        <select name="etat" id="etat" class="form-control">
+                            {% for etat in etatOrders %}
+                                <option value="{{ etat.id }}" {% if order.etat.id == etat.id %}selected{% endif %}>{{ etat.etat }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>{{ order.payementtype.type }}</td>
+                    <td>
+                        <select name="payementEtat" id="payementEtat" class="form-control" {% if order.etatPayement == 1 %}disabled{% endif %}>
+                            <option value="1" {% if order.etatPayement == 1 %}selected{% endif %}>Payée</option>
+                            <option value="0" {% if order.etatPayement == 0 %}selected{% endif %}>Non payée</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button 
+                            class="btn btn-info" 
+                            id="Facture" 
+                            onClick="demandeFacture('{{order.id}}','{{order.user.email}}')"
+                        >
+                            Facture
+                        </button>
+                    </td>
+                    <td>
+                        <a  class="btn btn-warning"
+                            href="{{ path('app_order_consulter', {'id': order.id}) }}"
+                        >
+                            Consulter
+                        </a>
+                    </td>
+                </tr>
+                <input type="hidden" id="id" orderId="{{ order.id }}">
+            {% endfor %}
+        </tbody>
+    </table>
+    <script>
+        function demandeFacture(id, email) {
+            window.location.href = `${window.location.origin}/commande/demande/facture/${id}/${email}`;
+        }
+
+        const etat = document.querySelectorAll('#etat');
+        const payementEtat = document.querySelectorAll('#payementEtat');
+
+        etat.forEach((element) => {
+            element.addEventListener('change', (e) => {
+                const id = e.target.parentElement.parentElement.children[0].innerText;
+                fetch(`${window.location.origin}/commande/update/etat/${id}/${e.target.value}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: e.target.parentElement.parentElement.children[0].innerText,
+                    }),
+                })
+            });
+        });
+        payementEtat.forEach((element) => {
+            element.addEventListener('change', (e) => {
+                const id = e.target.parentElement.parentElement.children[0].innerText;
+                fetch(`${window.location.origin}/commande/update/payement/${id}/${e.target.value}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: e.target.parentElement.parentElement.children[0].innerText,
+                    }),
+                })
+            });
+        });
+    </script>
+{% endblock %}
